@@ -11,6 +11,7 @@ body {
 }
 .textbox {
   width: 100%;
+  font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
   text-align: center;
   background-color: #dcdcdc;
 }
@@ -23,12 +24,15 @@ body {
 .left-column {
   width: 20%;
   background-color: lightblue;
+  font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
   padding: 20px;
 }
 .right-column {
   width: 80%;
   background-color: lightgreen;
+  font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
   padding: 20px;
+  height: 'max-content';
   overflow-y: auto; /* Add this to enable vertical scrolling */
 }
 .button-container {
@@ -39,9 +43,15 @@ body {
 .button {
   padding: 10px;
   border-radius: 25px;
+  font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
   background-color: #777;
   font-weight: bold;
   color: black;
   border: none;
   cursor: pointer;
+}
+
+/* Change the link color to #111 (black) on hover */
+button:hover {
+  background-color: #666;
 }

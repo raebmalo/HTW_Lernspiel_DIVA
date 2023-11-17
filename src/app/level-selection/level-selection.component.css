@@ -17,6 +17,7 @@ li a {
   display: block;
   color: white;
   font-weight: bold;
+  font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
@@ -24,6 +25,6 @@ li a {
 
 /* Change the link color to #111 (black) on hover */
 li a:hover {
-  background-color: #111;
+  background-color: #222;
 }
   
