@@ -20,19 +20,21 @@ body {
 }
 .contentbox {
   display: flex;
+  /*height: 200px;*/
 }
 .left-column {
   width: 20%;
   background-color: lightblue;
   font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
   padding: 20px;
+  /*height: 100%;*/
 }
 .right-column {
   width: 80%;
   background-color: lightgreen;
   font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
   padding: 20px;
-  height: 'max-content';
+  /*height: 100%;*/
   overflow-y: auto; /* Add this to enable vertical scrolling */
 }
 .button-container {
