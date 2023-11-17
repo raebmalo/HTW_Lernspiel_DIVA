@@ -36,7 +36,7 @@ export class GameUiComponent implements AfterViewInit {
     this.c = newCanvas.getContext('2d')!;
 
     // Set the size of the canvas to the screen size
-    newCanvas.width = window.innerWidth;
+    newCanvas.width = 10 * Boundary.height;
     newCanvas.height = 10 * Boundary.height;
 
     // Create boundaries based on your map logic

@@ -1,3 +1,11 @@
 @import '../globalconfig.css';
 
+div {
+    margin: 10px;
+    display: grid;
+    place-items: center;
+  }
   
+  canvas {
+    display: block;
+  }
