@@ -14,24 +14,32 @@ body {
   font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
   text-align: center;
   background-color: #dcdcdc;
+  outline-color: black;
+  outline-style: solid;
+  padding-bottom: 15px;
+  outline-width: 5px;
 }
 .textbox h2 {
   color: #333;
 }
 .contentbox {
   display: flex;
+  outline-color: black;
+  outline-style: solid;
+  outline-width: 5px;
+  margin-top: 5px;
   /*height: 200px;*/
 }
 .left-column {
   width: 20%;
-  background-color: lightblue;
+  background-color: #dcdcdc;
   font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
   padding: 20px;
   /*height: 100%;*/
 }
 .right-column {
   width: 80%;
-  background-color: lightgreen;
+  background-color: #dcdcdc;
   font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
   padding: 20px;
   /*height: 100%;*/
