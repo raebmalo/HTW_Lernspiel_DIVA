@@ -7,7 +7,6 @@ import { HeaderComponent } from './header/header.component';
 import { GameUiComponent } from './game-ui/game-ui.component';
 import { InputAreaComponent } from './input-area/input-area.component';
 import { LevelSelectionComponent } from './level-selection/level-selection.component';
-import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +15,6 @@ import { FooterComponent } from './footer/footer.component';
     GameUiComponent,
     InputAreaComponent,
     LevelSelectionComponent,
-    FooterComponent
   ],
   imports: [
     BrowserModule,
