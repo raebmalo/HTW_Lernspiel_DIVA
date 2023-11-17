@@ -60,8 +60,8 @@ export class GameUiComponent implements AfterViewInit {
             this.boundaries.push(
               new Boundary({
                 position: {
-                  x: 45 * j,
-                  y: 45 * i,
+                  x: 44 * j,
+                  y: 44 * i,
                 },
               })
             );
@@ -79,8 +79,8 @@ export class GameUiComponent implements AfterViewInit {
 }
 
 class Boundary {
-  static width: number = 45;
-  static height: number = 45;
+  static width: number = 44;
+  static height: number = 44;
 
   position: { x: number; y: number };
   width: number;
@@ -88,8 +88,8 @@ class Boundary {
 
   constructor({ position }: { position: { x: number; y: number } }) {
     this.position = position;
-    this.width = 45;
-    this.height = 45;
+    this.width = 44;
+    this.height = 44;
   }
 
   draw(c: CanvasRenderingContext2D): void {

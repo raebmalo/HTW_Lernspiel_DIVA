@@ -13,20 +13,18 @@ body {
   width: 100%;
   font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
   text-align: center;
-  background-color: #dcdcdc;
+  color: #09103b;
+  background-color: #84879d;
   outline-color: black;
   outline-style: solid;
   padding-bottom: 15px;
   outline-width: 5px;
 }
 .textbox h2 {
-  color: #333;
+  color: #09103b;
 }
 .contentbox {
   display: flex;
-  outline-color: black;
-  outline-style: solid;
-  outline-width: 5px;
   margin-top: 5px;
   /*height: 200px;*/
 }
@@ -39,6 +37,7 @@ body {
 }
 .right-column {
   width: 80%;
+  color: #09103b;
   background-color: #dcdcdc;
   font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
   padding: 20px;
@@ -54,9 +53,9 @@ body {
   padding: 10px;
   border-radius: 25px;
   font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
-  background-color: #777;
+  background-color: #84879d;
   font-weight: bold;
-  color: black;
+  color: #09103b;
   border: none;
   cursor: pointer;
 }

@@ -15,9 +15,9 @@
   align-items: center;
   justify-content: center;
   cursor: pointer; /* Add cursor pointer on hover */
-  margin: 175px;
+  margin: 155px;
 }
 
 .resetdiv:hover, .playdiv:hover {
-  background-color: #222;
+  background-color: #cdcfd7;
 }

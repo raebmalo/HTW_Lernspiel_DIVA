@@ -5,14 +5,14 @@ ul {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #333;
+  background-color: #020411;
   display: flex; /* Use flexbox */
   justify-content: space-between; /* Add space between items */
 }
 
 li a {
   display: block;
-  color: white;
+  color: #cdcfd7;
   text-align: center;
   font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
   padding: 14px 16px;
