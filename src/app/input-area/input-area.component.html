@@ -1,21 +1,22 @@
 <div class="container">
     <div class="textbox">
-      <h2>Überschrift der Textbox</h2>
-      <p>Text aus der Datenbank oder andere dynamische Inhalte...</p>
+      <h2>Level 1</h2>
+      <p>Navigiere den Spieler durch die Hindernisse bis hin zum Ziel!</p>
     </div>
     <div class="contentbox">
       <div class="left-column">
         <div class="button-container">
-          <button class="button">Turn left</button>
-          <button class="button">Turn right</button>
-          <button class="button">Turn up</button>
-          <button class="button">Turn down</button>
-          <button class="button">If(obstacle==true)</button>
-        </div>
+          <button class="button" (click)="updateText('Turn left')">Turn left</button>
+        <button class="button" (click)="updateText('Turn right')">Turn right</button>
+        <button class="button" (click)="updateText('Turn up')">Turn up</button>
+        <button class="button" (click)="updateText('Turn down')">Turn down</button>
+        <button class="button" (click)="updateText('If(obstacle==true)')">If(obstacle==true)</button>
       </div>
+    </div>
       <div class="right-column">
         <!-- Inhalt der rechten, breiten Spalte -->
-        <p>Rechte, breite Spalte</p>
+        <h3>Code:</h3>
+        <p style="width: 500px;white-space: pre-line">{{ buttonText }}</p>
       </div>
     </div>
 </div>

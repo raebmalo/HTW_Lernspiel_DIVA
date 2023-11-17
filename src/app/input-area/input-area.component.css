@@ -10,8 +10,8 @@ body {
 }
 .textbox {
   width: 100%;
+  text-align: center;
   background-color: #dcdcdc;
-  padding: 20px;
 }
 .textbox h2 {
   color: #333;
@@ -28,6 +28,7 @@ body {
   width: 80%;
   background-color: lightgreen;
   padding: 20px;
+  overflow-y: auto; /* Add this to enable vertical scrolling */
 }
 .button-container {
   display: flex;
