@@ -1,17 +1,20 @@
-@import '../globalconfig.css';
+/* global-styles.css */
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
   background-color: #f0f0f0;
 }
+
 .container {
   display: flex;
   flex-direction: column;
 }
+
 .textbox {
   width: 100%;
-  font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
+  font-family: 'PixelFont', sans-serif;
   text-align: center;
   color: #09103b;
   background-color: #84879d;
@@ -20,39 +23,45 @@ body {
   padding-bottom: 15px;
   outline-width: 5px;
 }
+
 .textbox h2 {
   color: #09103b;
 }
+
 .contentbox {
   display: flex;
   margin-top: 5px;
-  /*height: 200px;*/
+  max-height: 28vh;
 }
+
 .left-column {
   width: 20%;
   background-color: #dcdcdc;
-  font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
+  font-family: 'PixelFont', sans-serif;
   padding: 20px;
-  /*height: 100%;*/
 }
+
 .right-column {
   width: 80%;
   color: #09103b;
   background-color: #dcdcdc;
-  font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
+  font-family: 'PixelFont', sans-serif;
   padding: 20px;
-  /*height: 100%;*/
-  overflow-y: auto; /* Add this to enable vertical scrolling */
+  overflow-y: auto;
+  max-height: 27vh; /* Set a maximum height or adjust as needed */
+  line-height: 1.5;
 }
+
 .button-container {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
+
 .button {
   padding: 10px;
   border-radius: 25px;
-  font-family: 'PixelFont', sans-serif; /* Use the defined font-family */
+  font-family: 'PixelFont', sans-serif;
   background-color: #84879d;
   font-weight: bold;
   color: #09103b;
@@ -60,7 +69,6 @@ body {
   cursor: pointer;
 }
 
-/* Change the link color to #111 (black) on hover */
 button:hover {
-  background-color: #666;
+  background-color: #cdcfd7;
 }
