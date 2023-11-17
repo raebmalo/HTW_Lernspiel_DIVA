@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'PixelFont';
+    src: url('../assets/fonts/pixelfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  body, h1, p {
+    margin: 0;
+    padding: 0;
+  }

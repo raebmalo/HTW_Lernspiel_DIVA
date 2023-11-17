@@ -91,10 +91,12 @@
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/assets/fonts"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "src/app/globalconfig.css"
             ],
             "scripts": []
           }
