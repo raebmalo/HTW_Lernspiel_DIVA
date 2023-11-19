@@ -1,7 +1,52 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import {HowToPlayComponent} from "./how-to-play/how-to-play.component";
+import {GameUiComponent} from "./game-ui/game-ui.component";
+import { InputAreaComponent } from './input-area/input-area.component';
+import { LevelSelectionComponent } from './level-selection/level-selection.component';
+import {TheIdeaComponent} from "./the-idea/the-idea.component";
+import {AboutUsComponent} from "./about-us/about-us.component";
+import {ImpressumComponent} from "./impressum/impressum.component";
 
-const routes: Routes = [];
+const routes: Routes = [
+  {
+    path: '',
+    redirectTo: '/play-the-game',
+    pathMatch: 'full'
+  },
+  {
+    path: 'play-the-game',
+    component: GameUiComponent,
+    children: [
+      {
+        path: '',
+        component: InputAreaComponent,
+        outlet: 'child1'
+      },
+      {
+        path: '',
+        component: LevelSelectionComponent,
+        outlet: 'child2'
+      }
+    ]
+  },
+  {
+    path: 'how-to-play',
+    component: HowToPlayComponent,
+  },
+  {
+    path: 'the-idea',
+    component: TheIdeaComponent,
+  },
+  {
+    path: 'about-us',
+    component: AboutUsComponent,
+  },
+  {
+    path: 'impressum',
+    component: ImpressumComponent,
+  },
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

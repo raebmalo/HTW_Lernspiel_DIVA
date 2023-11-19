@@ -7,6 +7,10 @@ import { HeaderComponent } from './header/header.component';
 import { GameUiComponent } from './game-ui/game-ui.component';
 import { InputAreaComponent } from './input-area/input-area.component';
 import { LevelSelectionComponent } from './level-selection/level-selection.component';
+import { HowToPlayComponent } from './how-to-play/how-to-play.component';
+import { TheIdeaComponent } from './the-idea/the-idea.component';
+import { AboutUsComponent } from './about-us/about-us.component';
+import { ImpressumComponent } from './impressum/impressum.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +19,10 @@ import { LevelSelectionComponent } from './level-selection/level-selection.compo
     GameUiComponent,
     InputAreaComponent,
     LevelSelectionComponent,
+    HowToPlayComponent,
+    TheIdeaComponent,
+    AboutUsComponent,
+    ImpressumComponent,
   ],
   imports: [
     BrowserModule,
