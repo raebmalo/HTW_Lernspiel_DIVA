@@ -34,10 +34,6 @@ export class GameUiComponent implements AfterViewInit {
     this.canvasRef.nativeElement = newCanvas;
     const c: CanvasRenderingContext2D = newCanvas.getContext('2d')!;;
 
-    // Set the size of the canvas to the screen size
-    newCanvas.width = 10 * Boundary.height;
-    newCanvas.height = 10 * Boundary.height;
-
     // Create boundaries based on your map logic
     const map: string[][] = [
       ['-','-','-','-','-','-','-','-','-','-'],
@@ -51,6 +47,10 @@ export class GameUiComponent implements AfterViewInit {
       [' ',' ',' ','-',' ',' ',' ','-',' ','-'],
       ['-','-','-','-','-','-','-','-','-','-'],
     ];
+
+    // Set the size of the canvas to the screen size
+    newCanvas.width = map[0].length * Boundary.height;
+    newCanvas.height = map.length * Boundary.height;
 
     map.forEach((row, i) => {
       row.forEach((symbol, j) => {
@@ -134,7 +134,8 @@ export class GameUiComponent implements AfterViewInit {
         player.velocity.x = 5;
       }
     }
-    addEventListener('keydown', ({ key }: { key: string }) => {
+    window.addEventListener('keydown', ({ key }: { key: string }) => {
+      console.log('Key pressed:', key);
       switch (key) {
         case 'w':
           keys['w'].pressed = true;
@@ -152,7 +153,8 @@ export class GameUiComponent implements AfterViewInit {
       console.log(player.velocity);
     });
     
-    addEventListener('keyup', ({ key }: { key: string }) => {
+    window.addEventListener('keyup', ({ key }: { key: string }) => {
+      console.log('Key released:', key);
       switch (key) {
         case 'w':
           keys['w'].pressed = false;
