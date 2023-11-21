@@ -9,7 +9,7 @@
         <canvas #myCanvas></canvas>
     </div>
     <div class="playdiv">
-        <svg xmlns="http://www.w3.org/2000/svg" width="100px" height="100px" viewBox="0 0 24 24"><path stroke="#09103B" fill="#09103B" d="M10 20H8V4h2v2h2v3h2v2h2v2h-2v2h-2v3h-2v2z"/>
+        <svg (click)="startGame()" xmlns="http://www.w3.org/2000/svg" width="100px" height="100px" viewBox="0 0 24 24"><path stroke="#09103B" fill="#09103B" d="M10 20H8V4h2v2h2v3h2v2h2v2h-2v2h-2v3h-2v2z"/>
         </svg>
     </div>
 </div>
@@ -22,11 +22,11 @@
     <div class="contentbox">
         <div class="left-column">
             <div class="button-container">
-                <button class="button" (click)="updateText('Turn left')">Turn left</button>
-                <button class="button" (click)="updateText('Turn right')">Turn right</button>
-                <button class="button" (click)="updateText('Turn up')">Turn up</button>
-                <button class="button" (click)="updateText('Turn down')">Turn down</button>
-                <button class="button" (click)="updateText('If(obstacle==true)')">If(obstacle==true)</button>
+                <button class="button" (click)="updateText('left')">Turn left</button>
+                <button class="button" (click)="updateText('right')">Turn right</button>
+                <button class="button" (click)="updateText('up')">Turn up</button>
+                <button class="button" (click)="updateText('down')">Turn down</button>
+                <button class="button" (click)="updateText('move')">Move</button>
             </div>
         </div>
         <div class="right-column">

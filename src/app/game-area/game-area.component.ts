@@ -9,13 +9,52 @@ export class GameAreaComponent implements AfterViewInit {
   @ViewChild('myCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
   
   boundaries: Boundary[] = [];
-  dynamicText: string = 'Initial text in the textbox';
-  buttonText: string = ''; // Text that will be displayed in the right column
+  buttonText: string[] = []; // Text that will be displayed in the right column
+
 
   updateText(text: string): void {
     // Update the text in the right column
-    if(!this.buttonText) this.buttonText = text;
-    else this.buttonText = this.buttonText + "\n" + text;
+    this.buttonText.push(text);
+    this.updateRightColumn();
+  }
+
+  updateRightColumn(){
+    //get context of right column
+    let rightColumn = document.querySelector('.right-column');
+    //create string and join every object in element with \n
+    let rightColumnText: string = this.buttonText.join('\n');
+    //if right column exists replace text
+    if(rightColumn instanceof HTMLElement){
+      rightColumn.textContent = rightColumnText;
+    }
+  }
+
+  startGame() {
+    this.buttonText.forEach((element) => {
+      let direction: string = "";
+      switch(element){
+        case 'left': 
+          direction = 'left';
+          //player.velocity.y = -5;
+          break;
+        case 'right':
+          direction = 'right';
+          //player.velocity.x = -5;
+          break;
+        case 'up':
+          direction = 'up';
+          //player.velocity.y = 5;
+          break;
+        case 'down':
+          direction = 'down';
+          //player.velocity.x = 5;
+          break;
+        case 'walk':
+          //implement movement
+          break;
+      }
+    });
+
   }
 
   constructor(private renderer: Renderer2) {}
@@ -115,13 +154,6 @@ export class GameAreaComponent implements AfterViewInit {
     });
     player.draw();
     
-    const keys: { [key: string]: { pressed: boolean } } = {
-      w: { pressed: false },
-      a: { pressed: false },
-      s: { pressed: false },
-      d: { pressed: false },
-    };
-    
     function animate(): void {
       requestAnimationFrame(animate);
       c.clearRect(0, 0, newCanvas.width, newCanvas.height);
@@ -131,53 +163,7 @@ export class GameAreaComponent implements AfterViewInit {
       player.update();
       player.velocity.x = 0;
       player.velocity.y = 0;
-    
-      if (keys['w'].pressed) {
-        player.velocity.y = -5;
-      } else if (keys['a'].pressed) {
-        player.velocity.x = -5;
-      } else if (keys['s'].pressed) {
-        player.velocity.y = 5;
-      } else if (keys['d'].pressed) {
-        player.velocity.x = 5;
-      }
     }
-    window.addEventListener('keydown', ({ key }: { key: string }) => {
-      console.log('Key pressed:', key);
-      switch (key) {
-        case 'w':
-          keys['w'].pressed = true;
-          break;
-        case 'a':
-          keys['a'].pressed = true;
-          break;
-        case 's':
-          keys['s'].pressed = true;
-          break;
-        case 'd':
-          keys['d'].pressed = true;
-          break;
-      }
-      console.log(player.velocity);
-    });
-    
-    window.addEventListener('keyup', ({ key }: { key: string }) => {
-      console.log('Key released:', key);
-      switch (key) {
-        case 'w':
-          keys['w'].pressed = false;
-          break;
-        case 'a':
-          keys['a'].pressed = false;
-          break;
-        case 's':
-          keys['s'].pressed = false;
-          break;
-        case 'd':
-          keys['d'].pressed = false;
-          break;
-      }
-    });
   }
 }
 
