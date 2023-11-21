@@ -1,13 +1,11 @@
 <header>
     <nav>
       <ul>
-        <li><a routerLink="/">How to Play</a></li>
-        <li><a routerLink="/about">The Idea</a></li>
-        <li><a routerLink="/">Play the game</a></li>
-        <li><a routerLink="/about">About Us</a></li>
-        <li><a routerLink="/about">Impressum</a></li>
-        <!-- Add more menu items as needed -->
+        <li><a [routerLink]="['/how-to-play']">How to Play</a></li>
+        <li><a [routerLink]="['/the-idea']">The Idea</a></li>
+        <li><a [routerLink]="['/play-the-game']">Play the game</a></li>
+        <li><a [routerLink]="['/about-us']">About Us</a></li>
+        <li><a [routerLink]="['/impressum']">Impressum</a></li>
       </ul>
     </nav>
   </header>
-  

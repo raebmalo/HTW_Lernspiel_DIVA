@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LevelSelectionComponent } from './level-selection.component';
+import { AboutUsComponent } from './about-us.component';
 
-describe('LevelSelectionComponent', () => {
-  let component: LevelSelectionComponent;
-  let fixture: ComponentFixture<LevelSelectionComponent>;
+describe('AboutUsComponent', () => {
+  let component: AboutUsComponent;
+  let fixture: ComponentFixture<AboutUsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [LevelSelectionComponent]
+      declarations: [AboutUsComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(LevelSelectionComponent);
+    fixture = TestBed.createComponent(AboutUsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,14 +1,22 @@
 import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef } from '@angular/core';
 
 @Component({
-  selector: 'app-game-ui',
-  templateUrl: './game-ui.component.html',
-  styleUrls: ['./game-ui.component.css']
+  selector: 'app-game-area',
+  templateUrl: './game-area.component.html',
+  styleUrls: ['./game-area.component.css']
 })
-export class GameUiComponent implements AfterViewInit {
+export class GameAreaComponent implements AfterViewInit {
   @ViewChild('myCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
   
   boundaries: Boundary[] = [];
+  dynamicText: string = 'Initial text in the textbox';
+  buttonText: string = ''; // Text that will be displayed in the right column
+
+  updateText(text: string): void {
+    // Update the text in the right column
+    if(!this.buttonText) this.buttonText = text;
+    else this.buttonText = this.buttonText + "\n" + text;
+  }
 
   constructor(private renderer: Renderer2) {}
 

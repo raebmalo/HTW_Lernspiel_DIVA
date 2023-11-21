@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InputAreaComponent } from './input-area.component';
+import { GameAreaComponent } from './game-area.component';
 
-describe('InputAreaComponent', () => {
-  let component: InputAreaComponent;
-  let fixture: ComponentFixture<InputAreaComponent>;
+describe('GameAreaComponent', () => {
+  let component: GameAreaComponent;
+  let fixture: ComponentFixture<GameAreaComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [InputAreaComponent]
+      declarations: [GameAreaComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(InputAreaComponent);
+    fixture = TestBed.createComponent(GameAreaComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
