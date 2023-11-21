@@ -7,6 +7,7 @@ import { LevelSelectionComponent } from './level-selection/level-selection.compo
 import {TheIdeaComponent} from "./the-idea/the-idea.component";
 import {AboutUsComponent} from "./about-us/about-us.component";
 import {ImpressumComponent} from "./impressum/impressum.component";
+import { GameAreaComponent } from './game-area/game-area.component';
 
 const routes: Routes = [
   {
@@ -16,19 +17,7 @@ const routes: Routes = [
   },
   {
     path: 'play-the-game',
-    component: GameUiComponent,
-    children: [
-      {
-        path: '',
-        component: InputAreaComponent,
-        outlet: 'child1'
-      },
-      {
-        path: '',
-        component: LevelSelectionComponent,
-        outlet: 'child2'
-      }
-    ]
+    component: GameAreaComponent,
   },
   {
     path: 'how-to-play',

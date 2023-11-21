@@ -11,6 +11,7 @@ import { HowToPlayComponent } from './how-to-play/how-to-play.component';
 import { TheIdeaComponent } from './the-idea/the-idea.component';
 import { AboutUsComponent } from './about-us/about-us.component';
 import { ImpressumComponent } from './impressum/impressum.component';
+import { GameAreaComponent } from './game-area/game-area.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { ImpressumComponent } from './impressum/impressum.component';
     TheIdeaComponent,
     AboutUsComponent,
     ImpressumComponent,
+    GameAreaComponent,
   ],
   imports: [
     BrowserModule,
