@@ -30,31 +30,7 @@ export class GameAreaComponent implements AfterViewInit {
   }
 
   startGame() {
-    this.buttonText.forEach((element) => {
-      let direction: string = "";
-      switch(element){
-        case 'left': 
-          direction = 'left';
-          //player.velocity.y = -5;
-          break;
-        case 'right':
-          direction = 'right';
-          //player.velocity.x = -5;
-          break;
-        case 'up':
-          direction = 'up';
-          //player.velocity.y = 5;
-          break;
-        case 'down':
-          direction = 'down';
-          //player.velocity.x = 5;
-          break;
-        case 'walk':
-          //implement movement
-          break;
-      }
-    });
-
+    
   }
 
   constructor(private renderer: Renderer2) {}
@@ -145,6 +121,11 @@ export class GameAreaComponent implements AfterViewInit {
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
       }
+      
+      resetVel(){
+        this.velocity.x = 0;
+        this.velocity.y = 0;
+      }
     }
     
     const boundaries: any[] = [];
@@ -153,17 +134,40 @@ export class GameAreaComponent implements AfterViewInit {
       velocity: { x: 0, y: 0 }
     });
     player.draw();
-    
-    function animate(): void {
-      requestAnimationFrame(animate);
-      c.clearRect(0, 0, newCanvas.width, newCanvas.height);
-      boundaries.forEach((boundary) => {
-        boundary.draw();
-      });
-      player.update();
-      player.velocity.x = 0;
-      player.velocity.y = 0;
+
+    function animate(buttonText: string[]): () => void {
+      return () => {
+        buttonText.forEach((element) => {
+          switch(element){
+            case 'left': 
+              player.resetVel();
+              player.velocity.x = 5;
+              break;
+            case 'right':
+              player.resetVel();
+              player.velocity.x = -5;
+              break;
+            case 'up':
+              player.resetVel();
+              player.velocity.y = 5;
+              break;
+            case 'down':
+              player.resetVel();
+              player.velocity.y = -5;
+              break;
+            case 'walk':
+              requestAnimationFrame(animate(buttonText)); // Use an arrow function here
+              c.clearRect(0, 0, newCanvas.width, newCanvas.height);
+              boundaries.forEach((boundary) => {
+                boundary.draw();
+              });
+              player.update();
+              break;
+          }
+        });
+      };
     }
+    requestAnimationFrame(animate(this.buttonText));
   }
 }
 
