@@ -1,9 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {HowToPlayComponent} from "./how-to-play/how-to-play.component";
-import {GameUiComponent} from "./game-ui/game-ui.component";
-import { InputAreaComponent } from './input-area/input-area.component';
-import { LevelSelectionComponent } from './level-selection/level-selection.component';
 import {TheIdeaComponent} from "./the-idea/the-idea.component";
 import {AboutUsComponent} from "./about-us/about-us.component";
 import {ImpressumComponent} from "./impressum/impressum.component";
