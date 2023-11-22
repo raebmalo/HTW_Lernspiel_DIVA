@@ -2,13 +2,14 @@
 
 body {
   font-family: Arial, sans-serif;
+  height: 96vh;
   margin: 0;
   padding: 0;
   background-color: #f0f0f0;
 }
 
 .parentdiv {
-  margin: 10px;
+  height: 50vh;
   display: grid;
   grid-template-columns: auto auto auto;
   grid-column-gap: 10px;
@@ -33,11 +34,13 @@ body {
 
 .container {
   display: flex;
+  height: 42vh;
   flex-direction: column;
 }
 
 .textbox {
-  width: 100%;
+  width: 100vw;
+  height: 12vh;
   font-family: 'PixelFont', sans-serif;
   text-align: center;
   color: #09103b;
@@ -55,17 +58,18 @@ body {
 .contentbox {
   display: flex;
   margin-top: 5px;
+  height: 30vh;
 }
 
 .left-column {
-  width: 20%;
+  width: 20vw;
   background-color: #dcdcdc;
   font-family: 'PixelFont', sans-serif;
   padding: 20px;
 }
 
 .right-column {
-  width: 80%;
+  width: 80vw;
   color: #09103b;
   background-color: #dcdcdc;
   font-family: 'PixelFont', sans-serif;
@@ -96,9 +100,10 @@ button:hover {
 
 ul {
   list-style-type: none;
+  height: 4vh;
   margin: 0;
   padding: 0;
-  width: 100%;
+  width: 100vw;
   display: flex;
   justify-content: center;
   background-color: #020411;
