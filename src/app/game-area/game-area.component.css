@@ -1,7 +1,7 @@
 @import '../globalconfig.css';
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'PixelFont';
   height: 96vh;
   margin: 0;
   padding: 0;
@@ -17,7 +17,8 @@ body {
   justify-content: center;
 }
 
-.resetdiv, .playdiv {
+.resetdiv,
+.playdiv {
   height: 100px;
   width: 100px;
   border-radius: 25px;
@@ -28,7 +29,8 @@ body {
   margin: 155px;
 }
 
-.resetdiv:hover, .playdiv:hover {
+.resetdiv:hover,
+.playdiv:hover {
   background-color: #cdcfd7;
 }
 
@@ -41,18 +43,23 @@ body {
 .textbox {
   width: 100vw;
   height: 12vh;
-  font-family: 'PixelFont', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* Center items horizontally */
   text-align: center;
   color: #09103b;
   background-color: #84879d;
   outline-color: black;
   outline-style: solid;
+  place-content: center;
   padding-bottom: 15px;
   outline-width: 5px;
 }
 
 .textbox h2 {
   color: #09103b;
+  margin-bottom: 20px; /* Remove default margin */
 }
 
 .contentbox {
@@ -64,7 +71,6 @@ body {
 .left-column {
   width: 20vw;
   background-color: #dcdcdc;
-  font-family: 'PixelFont', sans-serif;
   padding: 20px;
 }
 
@@ -72,7 +78,6 @@ body {
   width: 80vw;
   color: #09103b;
   background-color: #dcdcdc;
-  font-family: 'PixelFont', sans-serif;
   padding: 20px;
   overflow-y: auto;
 }
@@ -85,8 +90,8 @@ body {
 
 .button {
   padding: 10px;
+  font-family: inherit;
   border-radius: 25px;
-  font-family: 'PixelFont', sans-serif;
   background-color: #84879d;
   font-weight: bold;
   color: #09103b;
@@ -116,7 +121,6 @@ li a {
   display: block;
   color: #cdcfd7;
   font-weight: bold;
-  font-family: 'PixelFont', sans-serif;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
