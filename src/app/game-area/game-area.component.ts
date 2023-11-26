@@ -13,6 +13,7 @@ export class GameAreaComponent implements AfterViewInit {
   buttonText: string[] = [];
   player!: Player;
   animationActive: boolean = true;
+
   updateText(text: string): void {
     this.buttonText.push(text);
     this.updateRightColumn();
@@ -27,7 +28,36 @@ export class GameAreaComponent implements AfterViewInit {
   }
 
   startGame() {
-    // Additional logic if needed
+    this.buttonText.forEach((element) => {
+      console.log(element)
+      switch (element) {
+        case 'left':
+          this.player.resetVel();
+          this.player.velocity.x = -1;;
+          this.stopAnimation()
+          break;
+        case 'right':
+          this.player.resetVel();
+          //this.player.velocity.x = 1;
+          console.log(this.player.position.x)
+          console.log("RECHTS")
+          setTimeout(() => 
+                {
+                  this.player.position.x = this.player.position.x+40
+                },
+                1650);
+          break;
+        case 'up':
+          this.player.resetVel();
+          this.player.velocity.y = -1;
+          break;
+        case 'down':
+          this.player.resetVel();
+          this.player.velocity.y = 1;
+          break;
+      }
+    });
+    //this.player.resetVel();
   }
 
   constructor(private renderer: Renderer2) {
@@ -94,59 +124,24 @@ export class GameAreaComponent implements AfterViewInit {
     requestAnimationFrame(() => this.animate());
   }
 
-  private handleInput(buttonText: string[]): void {
-    buttonText.forEach((element) => {
-      console.log(element)
-      switch (element) {
-        case 'left':
-          this.player.resetVel();
-          this.player.velocity.x = -1;;
-          this.stopAnimation()
-          break;
-        case 'right':
-          //this.player.resetVel();
-          this.player.velocity.x = 1;
-          setTimeout(() => 
-                {
-                  this.stopAnimation()
-                },
-                650);
-          this.animationActive = true;
-          console.log(this.animationActive)
-          break;
-        case 'up':
-          this.player.resetVel();
-          this.player.velocity.y = -1;
-          break;
-        case 'down':
-          this.player.resetVel();
-          this.player.velocity.y = 1;
-          break;
-      }
-    });
-  }
-
   private animate(): void {
     if (!this.animationActive) {
       return; // Animation stoppen, wenn animationActive false ist
     }
-    const c: CanvasRenderingContext2D = this.canvasRef.nativeElement.getContext('2d')!;
-    
-    c.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
 
+    const c: CanvasRenderingContext2D = this.canvasRef.nativeElement.getContext('2d')!;
+    c.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
     this.boundaries.forEach((boundary) => {
       boundary.draw(c);
     });
 
-    this.handleInput(this.buttonText);
-    
+    //this.handleInput(this.buttonText);
     this.player.update();
     this.player.draw();
-
-  
-
     requestAnimationFrame(() => this.animate());
   }
+
+
   stopAnimation(): void {
     this.animationActive = false; // Animation stoppen
   }
@@ -203,7 +198,6 @@ class Player {
   }
 
   resetVel(): void {
-    console.log("hi");
     this.velocity.x = 0;
     this.velocity.y = 0;
   }
