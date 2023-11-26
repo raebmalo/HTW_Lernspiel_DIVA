@@ -1,4 +1,5 @@
 import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef } from '@angular/core';
+import { timeout } from 'rxjs';
 
 @Component({
   selector: 'app-game-area',
@@ -7,57 +8,52 @@ import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef } from '@ang
 })
 export class GameAreaComponent implements AfterViewInit {
   @ViewChild('myCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
-  
+
   boundaries: Boundary[] = [];
-  buttonText: string[] = []; // Text that will be displayed in the right column
-
-
+  buttonText: string[] = [];
+  player!: Player;
+  animationActive: boolean = true;
   updateText(text: string): void {
-    // Update the text in the right column
     this.buttonText.push(text);
     this.updateRightColumn();
   }
 
-  updateRightColumn(){
-    //get context of right column
+  updateRightColumn() {
     let rightColumn = document.querySelector('.right-column');
-    //create string and join every object in element with \n
     let rightColumnText: string = this.buttonText.join('\n');
-    //if right column exists replace text
-    if(rightColumn instanceof HTMLElement){
+    if (rightColumn instanceof HTMLElement) {
       rightColumn.textContent = rightColumnText;
     }
   }
 
   startGame() {
-    
+    // Additional logic if needed
   }
 
-  constructor(private renderer: Renderer2) {}
+  constructor(private renderer: Renderer2) {
+    this.player = new Player({
+      position: { x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2},
+      velocity: { x: 0, y: 0 }
+    });
+  }
 
   ngAfterViewInit() {
-    // Get a reference to the existing canvas in the template
     const existingCanvas = this.canvasRef.nativeElement;
-    // Create a new canvas dynamically
     const newCanvas = this.renderer.createElement('canvas');
     const parent = this.renderer.parentNode(existingCanvas);
 
-    // Copy content if needed (e.g., context, drawing commands)
     const existingContext = existingCanvas.getContext('2d');
     const newContext = newCanvas.getContext('2d');
     if (existingContext && newContext) {
       newContext.drawImage(existingCanvas, 0, 0);
     }
 
-    // Replace the existing canvas with the new one in the DOM
     this.renderer.insertBefore(parent!, newCanvas, existingCanvas);
     this.renderer.removeChild(parent!, existingCanvas);
 
-    // Set the new canvas and context for further use
     this.canvasRef.nativeElement = newCanvas;
-    const c: CanvasRenderingContext2D = newCanvas.getContext('2d')!;;
+    const c: CanvasRenderingContext2D = newCanvas.getContext('2d')!;
 
-    // Create boundaries based on your map logic
     const map: string[][] = [
       ['-','-','-','-','-','-','-','-','-','-'],
       [' ',' ',' ',' ','-',' ','-',' ',' ','-'],
@@ -71,8 +67,7 @@ export class GameAreaComponent implements AfterViewInit {
       ['-','-','-','-','-','-','-','-','-','-'],
     ];
 
-    // Set the size of the canvas to the screen size
-    newCanvas.width = map[0].length * Boundary.height;
+    newCanvas.width = map[0].length * Boundary.width;
     newCanvas.height = map.length * Boundary.height;
 
     map.forEach((row, i) => {
@@ -88,86 +83,77 @@ export class GameAreaComponent implements AfterViewInit {
               })
             );
             break;
-          // Add more cases if needed
         }
       });
     });
 
-    // Draw the boundaries
     this.boundaries.forEach(boundary => {
       boundary.draw(c);
     });
-    class Player {
-      position: { x: number; y: number };
-      velocity: { x: number; y: number };
-      radius: number;
-    
-      constructor({position, velocity}: { position: { x: number; y: number }; velocity: { x: number; y: number }}) {
-        this.position = position;
-        this.velocity = velocity;
-        this.radius = 15;
-      }
-      
-      draw(): void {
-        c.beginPath();
-        c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
-        c.fillStyle = '#fccb00';
-        c.fill();
-        c.closePath();
-      }
-    
-      update(): void {
-        this.draw();
-        this.position.x += this.velocity.x;
-        this.position.y += this.velocity.y;
-      }
-      
-      resetVel(){
-        this.velocity.x = 0;
-        this.velocity.y = 0;
-      }
-    }
-    
-    const boundaries: any[] = [];
-    const player = new Player({
-      position: { x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2},
-      velocity: { x: 0, y: 0 }
-    });
-    player.draw();
 
-    function animate(buttonText: string[]): () => void {
-      return () => {
-        buttonText.forEach((element) => {
-          switch(element){
-            case 'left': 
-              player.resetVel();
-              player.velocity.x = 5;
-              break;
-            case 'right':
-              player.resetVel();
-              player.velocity.x = -5;
-              break;
-            case 'up':
-              player.resetVel();
-              player.velocity.y = 5;
-              break;
-            case 'down':
-              player.resetVel();
-              player.velocity.y = -5;
-              break;
-            case 'walk':
-              requestAnimationFrame(animate(buttonText)); // Use an arrow function here
-              c.clearRect(0, 0, newCanvas.width, newCanvas.height);
-              boundaries.forEach((boundary) => {
-                boundary.draw();
-              });
-              player.update();
-              break;
-          }
-        });
-      };
+    requestAnimationFrame(() => this.animate());
+  }
+
+  private handleInput(buttonText: string[]): void {
+    buttonText.forEach((element) => {
+      console.log(element)
+      switch (element) {
+        case 'left':
+          this.player.resetVel();
+          this.player.velocity.x = -1;;
+          this.stopAnimation()
+          break;
+        case 'right':
+          //this.player.resetVel();
+          this.player.velocity.x = 1;
+          setTimeout(() => 
+                {
+                  this.stopAnimation()
+                },
+                650);
+          this.animationActive = true;
+          console.log(this.animationActive)
+          break;
+        case 'up':
+          this.player.resetVel();
+          this.player.velocity.y = -1;
+          break;
+        case 'down':
+          this.player.resetVel();
+          this.player.velocity.y = 1;
+          break;
+      }
+    });
+  }
+
+  private animate(): void {
+    if (!this.animationActive) {
+      return; // Animation stoppen, wenn animationActive false ist
     }
-    requestAnimationFrame(animate(this.buttonText));
+    const c: CanvasRenderingContext2D = this.canvasRef.nativeElement.getContext('2d')!;
+    
+    c.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
+
+    this.boundaries.forEach((boundary) => {
+      boundary.draw(c);
+    });
+
+    this.handleInput(this.buttonText);
+    
+    this.player.update();
+    this.player.draw();
+
+  
+
+    requestAnimationFrame(() => this.animate());
+  }
+  stopAnimation(): void {
+    this.animationActive = false; // Animation stoppen
+  }
+  
+  startAnimation(): void {
+    this.animationActive = true; // Animation starten
+    this.animate();
   }
 }
 
@@ -189,5 +175,39 @@ class Boundary {
     c.fillStyle = '#09103B';
     c.fillRect(this.position.x, this.position.y, this.width, this.height);
   }
+}
+
+class Player {
+  position: { x: number; y: number };
+  velocity: { x: number; y: number };
+  radius: number;
+
+  constructor({ position, velocity }: { position: { x: number; y: number }; velocity: { x: number; y: number } }) {
+    this.position = position;
+    this.velocity = velocity;
+    this.radius = 15;
+  }
+
+  draw(): void {
+    const c: CanvasRenderingContext2D = document.querySelector('canvas')!.getContext('2d')!;
+    c.beginPath();
+    c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+    c.fillStyle = '#fccb00';
+    c.fill();
+    c.closePath();
+  }
+
+  update(): void {
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
+  }
+
+  resetVel(): void {
+    console.log("hi");
+    this.velocity.x = 0;
+    this.velocity.y = 0;
+  }
+  
+ 
 }
 
