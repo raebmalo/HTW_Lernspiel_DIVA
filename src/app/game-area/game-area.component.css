@@ -8,8 +8,8 @@ body {
 }
 
 .parentdiv {
-  margin: 10px;
-  display: grid;
+  padding: 10px;
+  display: flex;
   grid-template-columns: auto auto auto;
   grid-column-gap: 10px;
   align-items: center;
@@ -24,7 +24,7 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin: 155px;
+  margin: 0 auto;
 }
 
 .resetdiv:hover, .playdiv:hover {
@@ -34,17 +34,18 @@ body {
 .container {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  padding: 10px;
 }
 
 .textbox {
-  width: 100%;
   font-family: 'PixelFont', sans-serif;
   text-align: center;
   color: #09103b;
   background-color: #84879d;
   outline-color: black;
   outline-style: solid;
-  padding-bottom: 15px;
+  padding: 15px;
   outline-width: 5px;
 }
 
@@ -53,23 +54,21 @@ body {
 }
 
 .contentbox {
+  width: 95%;
   display: flex;
-  margin-top: 5px;
+  flex-direction: column;
+  margin: 5px auto 0;
+  padding: 10px;
 }
 
-.left-column {
-  width: 20%;
+.left-column, .right-column {
+  width: 100%;
   background-color: #dcdcdc;
   font-family: 'PixelFont', sans-serif;
   padding: 20px;
 }
 
 .right-column {
-  width: 80%;
-  color: #09103b;
-  background-color: #dcdcdc;
-  font-family: 'PixelFont', sans-serif;
-  padding: 20px;
   overflow-y: auto;
 }
 
@@ -77,6 +76,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
 }
 
 .button {
@@ -98,13 +98,17 @@ ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
-  width: 100%;
   display: flex;
   justify-content: center;
   background-color: #020411;
   outline-color: black;
   outline-style: solid;
   outline-width: 5px;
+  overflow-x: auto;
+}
+
+li {
+  margin: 0 5px;
 }
 
 li a {
@@ -113,10 +117,40 @@ li a {
   font-weight: bold;
   font-family: 'PixelFont', sans-serif;
   text-align: center;
-  padding: 14px 16px;
+  padding: 3% 5%;
   text-decoration: none;
+  font-size: 12px;
 }
 
 li a:hover {
   background-color: #222;
+}
+
+@media (min-width: 768px) {
+  .parentdiv {
+    justify-content: space-between;
+  }
+
+  .contentbox {
+    flex-direction: row;
+  }
+
+  .left-column, .right-column {
+    width: 48%;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .level-list li a {
+    display: inline-block;
+    padding: 5px;
+    font-size: 10px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .parentdiv {
+    justify-content: space-around;
+  }
 }
