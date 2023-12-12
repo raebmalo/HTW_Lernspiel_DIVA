@@ -13,6 +13,7 @@ export class GameAreaComponent implements AfterViewInit {
   buttonText: string[] = [];
   player!: Player;
   animationActive: boolean = true;
+  isPlayButtonDisabled: boolean = false;
 
   updateText(text: string): void {
     this.buttonText.push(text);
@@ -40,6 +41,7 @@ export class GameAreaComponent implements AfterViewInit {
 
   startGame() {
     this.animateAction(0, 44);
+    this.isPlayButtonDisabled = true;
   }
   
   animateAction(index: number, steps: number) {
@@ -89,6 +91,7 @@ export class GameAreaComponent implements AfterViewInit {
       this // Übergeben Sie eine Referenz auf das GameAreaComponent-Objekt
     );
   }
+
   ngAfterViewInit() {
     const existingCanvas = this.canvasRef.nativeElement;
     const newCanvas = this.renderer.createElement('canvas');
@@ -222,12 +225,10 @@ class Player {
   }
 
   draw(): void {
-    console.log("hi")
     const c: CanvasRenderingContext2D = document.querySelector('canvas')!.getContext('2d')!;
     c.beginPath();
     c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
     if(this.collision === true) {
-      console.log("rot")
       c.fillStyle = 'red';
     }
     else {
@@ -235,7 +236,6 @@ class Player {
     }
     c.fill();
     c.closePath();
-    
   }
 
   update(): void {
@@ -264,7 +264,7 @@ class Player {
       // Check if the distance is less than the radius squared (collision occurs)
       if (distanceSquared < this.radius * this.radius) {
         // Print information for debugging
-        //console.log("Collision detected!");
+        console.log("Collision detected!");
         //console.log("Player position:", this.position);
         //console.log("Boundary position:", boundary.position);
   
@@ -274,6 +274,7 @@ class Player {
         // Adjust player velocity after collision (set to 0 for simplicity)
         this.collision = true;
         //this.stopAnimation()
+        this.gameArea.isPlayButtonDisabled = true;
         this.resetVel();
         this.draw()
       

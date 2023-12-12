@@ -30,7 +30,10 @@ body {
 .resetdiv:hover, .playdiv:hover {
   background-color: #cdcfd7;
 }
-
+.playdiv.disabled {
+  background-color: grey; /* Set the background color to grey for the disabled state */
+  cursor: not-allowed;   /* Change the cursor to indicate it's not clickable */
+}
 .container {
   display: flex;
   flex-direction: column;
