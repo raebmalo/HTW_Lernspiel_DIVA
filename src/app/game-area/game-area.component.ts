@@ -27,6 +27,16 @@ export class GameAreaComponent implements AfterViewInit {
     }
   }
 
+  resetGame() {
+    this.player.position = {  x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 };
+    this.clearButtonText();
+    this.updateRightColumn();
+  }
+
+  clearButtonText() {
+    this.buttonText = [];
+  }
+
   startGame() {
     this.animateAction(0, 44);
   }
