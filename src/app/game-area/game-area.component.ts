@@ -30,6 +30,7 @@ export class GameAreaComponent implements AfterViewInit {
   resetGame() {
     this.player.position = {  x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 };
     this.clearButtonText();
+    this.player.resetCollision()
     this.updateRightColumn();
   }
 
@@ -80,12 +81,14 @@ export class GameAreaComponent implements AfterViewInit {
   }
 
   constructor(private renderer: Renderer2) {
-    this.player = new Player({
-      position: { x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2},
-      velocity: { x: 0, y: 0 }
-    });
+    this.player = new Player(
+      {
+        position: { x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 },
+        velocity: { x: 0, y: 0 },
+      },
+      this // Übergeben Sie eine Referenz auf das GameAreaComponent-Objekt
+    );
   }
-
   ngAfterViewInit() {
     const existingCanvas = this.canvasRef.nativeElement;
     const newCanvas = this.renderer.createElement('canvas');
@@ -196,20 +199,43 @@ class Player {
   position: { x: number; y: number };
   velocity: { x: number; y: number };
   radius: number;
+  collision: boolean;
+  private gameArea: GameAreaComponent;
 
-  constructor({ position, velocity }: { position: { x: number; y: number }; velocity: { x: number; y: number } }) {
+  constructor(
+    { position, velocity }: { position: { x: number; y: number }; velocity: { x: number; y: number } },
+    gameArea: GameAreaComponent // Fügen Sie eine zusätzliche Parameter für die GameArea hinzu
+  ) {
     this.position = position;
     this.velocity = velocity;
     this.radius = 15;
+    this.collision = false;
+    this.gameArea = gameArea; // Weisen Sie die GameArea-Referenz zu
+  }
+
+  stopAnimation(): void {
+    this.gameArea.stopAnimation(); // Rufen Sie die Methode stopAnimation aus GameAreaComponent auf
+  }
+
+  resetCollision(): void {
+    this.collision = false;
   }
 
   draw(): void {
+    console.log("hi")
     const c: CanvasRenderingContext2D = document.querySelector('canvas')!.getContext('2d')!;
     c.beginPath();
     c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+    if(this.collision === true) {
+      console.log("rot")
+      c.fillStyle = 'red';
+    }
+    else {
     c.fillStyle = '#fccb00';
+    }
     c.fill();
     c.closePath();
+    
   }
 
   update(): void {
@@ -221,18 +247,39 @@ class Player {
     this.velocity.x = 0;
     this.velocity.y = 0;
   }
-
+  resetToStartPosition(): void {
+    this.position = { x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 };
+  }
   checkBoundaryCollision(boundaries: Boundary[]): void {
     for (const boundary of boundaries) {
-      if (
-        this.position.x < boundary.position.x + boundary.width &&
-        this.position.x + this.radius * 2 > boundary.position.x &&
-        this.position.y < boundary.position.y + boundary.height &&
-        this.position.y + this.radius * 2 > boundary.position.y
-      ) {
-        // Kollision mit der Grenze, stoppen Sie die Bewegung oder ergreifen Sie andere Maßnahmen
+      // Calculate the distance between the center of the circle (player) and the closest point on the rectangle (boundary)
+      const closestX = Math.max(boundary.position.x, Math.min(this.position.x, boundary.position.x + boundary.width));
+      const closestY = Math.max(boundary.position.y, Math.min(this.position.y, boundary.position.y + boundary.height));
+  
+      // Calculate the distance between the closest point on the rectangle and the center of the circle
+      const distanceX = this.position.x - closestX;
+      const distanceY = this.position.y - closestY;
+      const distanceSquared = distanceX * distanceX + distanceY * distanceY;
+  
+      // Check if the distance is less than the radius squared (collision occurs)
+      if (distanceSquared < this.radius * this.radius) {
+        // Print information for debugging
+        //console.log("Collision detected!");
+        //console.log("Player position:", this.position);
+        //console.log("Boundary position:", boundary.position);
+  
+        // Uncomment the following line to reset the player's position upon collision
+        // this.resetToStartPosition();
+  
+        // Adjust player velocity after collision (set to 0 for simplicity)
+        this.collision = true;
+        //this.stopAnimation()
         this.resetVel();
-        console.log("Kollision! Spieler wird zurückgesetzt.");
+        this.draw()
+      
+    
+        //this.resetToStartPosition()
+        // You can add additional logic here based on your requirements
       }
     }
   }
