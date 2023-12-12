@@ -156,6 +156,7 @@ export class GameAreaComponent implements AfterViewInit {
 
     //this.handleInput(this.buttonText);
     this.player.update();
+    this.player.checkBoundaryCollision(this.boundaries); 
     this.player.draw();
     requestAnimationFrame(() => this.animate());
   }
@@ -220,6 +221,22 @@ class Player {
     this.velocity.x = 0;
     this.velocity.y = 0;
   }
+
+  checkBoundaryCollision(boundaries: Boundary[]): void {
+    for (const boundary of boundaries) {
+      if (
+        this.position.x < boundary.position.x + boundary.width &&
+        this.position.x + this.radius * 2 > boundary.position.x &&
+        this.position.y < boundary.position.y + boundary.height &&
+        this.position.y + this.radius * 2 > boundary.position.y
+      ) {
+        // Kollision mit der Grenze, stoppen Sie die Bewegung oder ergreifen Sie andere Maßnahmen
+        this.resetVel();
+        console.log("Kollision! Spieler wird zurückgesetzt.");
+      }
+    }
+  }
+
   
  
 }
