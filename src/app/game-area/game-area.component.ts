@@ -28,36 +28,45 @@ export class GameAreaComponent implements AfterViewInit {
   }
 
   startGame() {
-    this.buttonText.forEach((element) => {
-      console.log(element)
+    this.animateAction(0, 44);
+  }
+  
+  animateAction(index: number, steps: number) {
+    if (index < this.buttonText.length) {
+      const element = this.buttonText[index];
       switch (element) {
         case 'left':
-          this.player.resetVel();
-          this.player.velocity.x = -1;;
-          this.stopAnimation()
+          this.animateMovement(index, -1, 0, steps);
           break;
         case 'right':
-          this.player.resetVel();
-          //this.player.velocity.x = 1;
-          console.log(this.player.position.x)
-          console.log("RECHTS")
-          setTimeout(() => 
-                {
-                  this.player.position.x = this.player.position.x+40
-                },
-                1650);
+          this.animateMovement(index, 1, 0, steps);
           break;
         case 'up':
-          this.player.resetVel();
-          this.player.velocity.y = -1;
+          this.animateMovement(index, 0, -1, steps);
           break;
         case 'down':
-          this.player.resetVel();
-          this.player.velocity.y = 1;
+          this.animateMovement(index, 0, 1, steps);
           break;
       }
-    });
-    //this.player.resetVel();
+    } else {
+      // All actions are done, reset player velocity and restart animation
+      this.player.resetVel();
+      this.startAnimation();
+    }
+  }
+  
+  animateMovement(index: number, deltaX: number, deltaY: number, steps: number) {
+    let currentStep = 0;
+    const moveInterval = setInterval(() => {
+      this.player.position.x += deltaX;
+      this.player.position.y += deltaY;
+      currentStep++;
+  
+      if (currentStep >= steps) {
+        clearInterval(moveInterval);
+        this.animateAction(index + 1, steps);
+      }
+    }, 16); // 60 fps
   }
 
   constructor(private renderer: Renderer2) {
