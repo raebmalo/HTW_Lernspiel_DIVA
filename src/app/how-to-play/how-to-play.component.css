@@ -11,9 +11,12 @@ body {
   width: 90%;
   padding: 5%;
   color: #09103b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.textbox h2 {
+.textbox h3 {
   color: #09103b;
 }
 
@@ -26,4 +29,21 @@ header {
   color: #09103b;
   text-align: center;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media only screen and (max-width: 600px) {
+  .textbox {
+    padding: 10px;
+  }
+
+  .textbox h2 {
+    font-size: 1em;
+  }
+
+  .textbox ol {
+    padding-left: 10px;
+  }
 }
