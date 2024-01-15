@@ -1,0 +1,13 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model GameData {
+  /// Field referred in an index, but found no data to define the type.
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
