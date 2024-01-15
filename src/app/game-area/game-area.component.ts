@@ -14,7 +14,9 @@ export class GameAreaComponent implements AfterViewInit {
   player!: Player;
   animationActive: boolean = true;
   isPlayButtonDisabled: boolean = false;
+  goal!: Goal;
 
+  
   updateText(text: string): void {
     this.buttonText.push(text);
     this.updateRightColumn();
@@ -41,6 +43,7 @@ export class GameAreaComponent implements AfterViewInit {
 
   startGame() {
     this.animateAction(0, 44);
+    // Funktion Animation beendet --> Button disabled:
     this.isPlayButtonDisabled = true;
   }
   
@@ -99,6 +102,16 @@ export class GameAreaComponent implements AfterViewInit {
 
     const existingContext = existingCanvas.getContext('2d');
     const newContext = newCanvas.getContext('2d');
+    const goalColumnIndex = 1;  // Beispielwert
+    const goalRowIndex = 1;     // Beispielwert
+  
+    this.goal = new Goal({
+      position: {
+        x: 150 * goalColumnIndex,
+        y: 70 * goalRowIndex,
+      },
+    });
+
     if (existingContext && newContext) {
       newContext.drawImage(existingCanvas, 0, 0);
     }
@@ -153,16 +166,22 @@ export class GameAreaComponent implements AfterViewInit {
     if (!this.animationActive) {
       return; // Animation stoppen, wenn animationActive false ist
     }
-
+  
     const c: CanvasRenderingContext2D = this.canvasRef.nativeElement.getContext('2d')!;
     c.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
     this.boundaries.forEach((boundary) => {
       boundary.draw(c);
     });
-
+  
     //this.handleInput(this.buttonText);
     this.player.update();
-    this.player.checkBoundaryCollision(this.boundaries); 
+    this.player.checkBoundaryCollision(this.boundaries);
+  
+    // Check if the goal is reached before continuing with the animation
+    if (!this.animationActive || this.player.checkGoalCollision()) {
+      return;
+    }
+  
     this.player.draw();
     requestAnimationFrame(() => this.animate());
   }
@@ -194,6 +213,25 @@ class Boundary {
 
   draw(c: CanvasRenderingContext2D): void {
     c.fillStyle = '#09103B';
+    c.fillRect(this.position.x, this.position.y, this.width, this.height);
+  }
+}
+class Goal {
+  static width: number = 44;
+  static height: number = 44;
+
+  position: { x: number; y: number };
+  width: number;
+  height: number;
+
+  constructor({ position }: { position: { x: number; y: number } }) {
+    this.position = position;
+    this.width = 44;
+    this.height = 44;
+  }
+
+  draw(c: CanvasRenderingContext2D): void {
+    c.fillStyle = 'green';
     c.fillRect(this.position.x, this.position.y, this.width, this.height);
   }
 }
@@ -283,6 +321,24 @@ class Player {
         // You can add additional logic here based on your requirements
       }
     }
+  }
+
+  checkGoalCollision(): boolean {
+    // ...
+  
+    const distanceX = this.position.x - this.gameArea.goal.position.x;
+    const distanceY = this.position.y - this.gameArea.goal.position.y;
+    const distanceSquared = distanceX * distanceX + distanceY * distanceY;
+  
+    if (distanceSquared < this.radius * this.radius) {
+      // Spieler hat das Ziel erreicht
+      console.log('Goal reached!');
+      alert("Spiel beendet");
+      this.gameArea.isPlayButtonDisabled = true; // Optionally disable the play button
+      return true;
+    }
+  
+    return false;
   }
 
   
