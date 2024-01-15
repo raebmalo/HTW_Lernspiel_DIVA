@@ -32,12 +32,11 @@ export class GameAreaComponent implements AfterViewInit {
 
   resetGame() {
     this.player.position = {  x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 };
-    this.clearButtonText();
     this.player.resetCollision()
     this.updateRightColumn();
   }
 
-  clearButtonText() {
+  deleteText(): void {
     this.buttonText = [];
   }
 
@@ -124,14 +123,14 @@ export class GameAreaComponent implements AfterViewInit {
 
     const map: string[][] = [
       ['-','-','-','-','-','-','-','-','-','-'],
-      [' ',' ',' ',' ','-',' ','-',' ',' ','-'],
+      ['-',' ',' ',' ','-',' ','-',' ',' ','-'],
       ['-','-','-',' ','-',' ','-','-',' ','-'],
       ['-',' ',' ',' ','-',' ','-','-',' ','-'],
       ['-',' ','-','-','-',' ','-','-',' ','-'],
       ['-',' ',' ',' ',' ',' ',' ',' ',' ','-'],
       ['-','-','-','-','-','-','-','-',' ','-'],
       ['-','-',' ',' ',' ','-',' ',' ',' ','-'],
-      [' ',' ',' ','-',' ',' ',' ','-',' ','-'],
+      ['-',' ',' ','-',' ',' ',' ','-',' ','-'],
       ['-','-','-','-','-','-','-','-','-','-'],
     ];
 

@@ -68,6 +68,7 @@ body {
 }
 
 .right-column {
+  position: relative; /* Add position relative to allow absolute positioning */
   width: 80%;
   color: #09103b;
   background-color: #dcdcdc;
@@ -80,6 +81,19 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.trashButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  height: 40px;
+  width: 40px;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .button {
