@@ -31,11 +31,12 @@ export class GameAreaComponent implements AfterViewInit {
   }
 
   resetGame() {
-    this.player.position = {  x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 };
-    this.player.resetCollision()
-    this.updateRightColumn();
+      this.player.position = {  x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 };
+      this.player.resetCollision();
+      this.player.goalReached = false; // Setzen Sie die goalReached-Flag zurück
+      this.updateRightColumn();
   }
-
+  
   deleteText(): void {
     this.buttonText = [];
   }
@@ -47,7 +48,9 @@ export class GameAreaComponent implements AfterViewInit {
   }
   
   animateAction(index: number, steps: number) {
-    if (index < this.buttonText.length) {
+    
+    if ((index < this.buttonText.length) && (this.animationActive == true)) {
+      console.log(index)
       const element = this.buttonText[index];
       switch (element) {
         case 'left':
@@ -101,16 +104,7 @@ export class GameAreaComponent implements AfterViewInit {
 
     const existingContext = existingCanvas.getContext('2d');
     const newContext = newCanvas.getContext('2d');
-    const goalColumnIndex = 1;  // Beispielwert
-    const goalRowIndex = 1;     // Beispielwert
-  
-    this.goal = new Goal({
-      position: {
-        x: 150 * goalColumnIndex,
-        y: 70 * goalRowIndex,
-      },
-    });
-
+   
     if (existingContext && newContext) {
       newContext.drawImage(existingCanvas, 0, 0);
     }
@@ -127,7 +121,7 @@ export class GameAreaComponent implements AfterViewInit {
       ['-','-','-',' ','-',' ','-','-',' ','-'],
       ['-',' ',' ',' ','-',' ','-','-',' ','-'],
       ['-',' ','-','-','-',' ','-','-',' ','-'],
-      ['-',' ',' ',' ',' ',' ',' ',' ',' ','-'],
+      ['-',' ',' ','+',' ',' ',' ',' ',' ','-'],
       ['-','-','-','-','-','-','-','-',' ','-'],
       ['-','-',' ',' ',' ','-',' ',' ',' ','-'],
       ['-',' ',' ','-',' ',' ',' ','-',' ','-'],
@@ -150,6 +144,14 @@ export class GameAreaComponent implements AfterViewInit {
               })
             );
             break;
+          case '+':
+            this.goal = new Goal({
+              position: {
+                x: 44 * j, // Berücksichtigen Sie die Breite der Boundary
+                y: 44 * i, // Berücksichtigen Sie die Höhe der Boundary
+              },
+            });
+            break;
         }
       });
     });
@@ -163,7 +165,7 @@ export class GameAreaComponent implements AfterViewInit {
 
   private animate(): void {
     if (!this.animationActive) {
-      return; // Animation stoppen, wenn animationActive false ist
+      return;
     }
   
     const c: CanvasRenderingContext2D = this.canvasRef.nativeElement.getContext('2d')!;
@@ -172,11 +174,12 @@ export class GameAreaComponent implements AfterViewInit {
       boundary.draw(c);
     });
   
-    //this.handleInput(this.buttonText);
+    // Zeichne das Ziel unabhängig von der Überprüfung der Goal-Kollision
+    this.goal.draw(c);
+  
     this.player.update();
     this.player.checkBoundaryCollision(this.boundaries);
   
-    // Check if the goal is reached before continuing with the animation
     if (!this.animationActive || this.player.checkGoalCollision()) {
       return;
     }
@@ -184,6 +187,7 @@ export class GameAreaComponent implements AfterViewInit {
     this.player.draw();
     requestAnimationFrame(() => this.animate());
   }
+  
 
 
   stopAnimation(): void {
@@ -241,6 +245,7 @@ class Player {
   radius: number;
   collision: boolean;
   private gameArea: GameAreaComponent;
+  goalReached: boolean = false;
 
   constructor(
     { position, velocity }: { position: { x: number; y: number }; velocity: { x: number; y: number } },
@@ -314,8 +319,6 @@ class Player {
         this.gameArea.isPlayButtonDisabled = true;
         this.resetVel();
         this.draw()
-      
-    
         //this.resetToStartPosition()
         // You can add additional logic here based on your requirements
       }
@@ -323,22 +326,31 @@ class Player {
   }
 
   checkGoalCollision(): boolean {
-    // ...
-  
-    const distanceX = this.position.x - this.gameArea.goal.position.x;
-    const distanceY = this.position.y - this.gameArea.goal.position.y;
+    if (this.goalReached) {
+      return false;
+    }
+    console.log(this.gameArea.goal.position.x, "goalposx")
+    console.log(this.gameArea.goal.position.y, "goalposy")
+    const distanceX = this.position.x - (this.gameArea.goal.position.x + 44);
+    const distanceY = this.position.y - (this.gameArea.goal.position.y + 44);
     const distanceSquared = distanceX * distanceX + distanceY * distanceY;
   
-    if (distanceSquared < this.radius * this.radius) {
-      // Spieler hat das Ziel erreicht
+    // Überprüfen Sie, ob die Distanz kleiner als die Summe der Radien von Spieler und Ziel ist
+    const combinedRadius = this.radius + Goal.width / 2; // Beachten Sie die Breite des Ziels
+    if (distanceSquared < combinedRadius * combinedRadius) {
       console.log('Goal reached!');
       alert("Spiel beendet");
-      this.gameArea.isPlayButtonDisabled = true; // Optionally disable the play button
+      this.gameArea.isPlayButtonDisabled = true;
+      this.goalReached = true;
+      this.stopAnimation();
       return true;
     }
   
     return false;
   }
+  
+  
+  
 
   
  
