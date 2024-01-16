@@ -34,8 +34,10 @@ export class GameAreaComponent implements AfterViewInit {
 
   // resets the player position and the collision-detection
   resetGame() {
-    this.player.position = {  x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 };
-    this.player.resetCollision()
+      this.player.position = {  x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 };
+      this.player.resetCollision();
+      this.player.goalReached = false; // Setzen Sie die goalReached-Flag zurück
+      this.updateRightColumn();
   }
 
   // deletes the code
@@ -53,8 +55,10 @@ export class GameAreaComponent implements AfterViewInit {
   }
   
   animateAction(index: number, steps: number) {
+    
     // finds the direction in which the player-figure shold move
-    if (index < this.buttonText.length) {
+    if ((index < this.buttonText.length) && (this.animationActive == true)) {
+      console.log(index)
       const element = this.buttonText[index];
       switch (element) {
         case 'left':
@@ -136,7 +140,7 @@ export class GameAreaComponent implements AfterViewInit {
       ['-','-','-',' ','-',' ','-','-',' ','-'],
       ['-',' ',' ',' ','-',' ','-','-',' ','-'],
       ['-',' ','-','-','-',' ','-','-',' ','-'],
-      ['-',' ',' ',' ',' ',' ',' ',' ',' ','-'],
+      ['-',' ',' ','+',' ',' ',' ',' ',' ','-'],
       ['-','-','-','-','-','-','-','-',' ','-'],
       ['-','-',' ',' ',' ','-',' ',' ',' ','-'],
       ['-',' ',' ','-',' ',' ',' ','-',' ','-'],
@@ -160,6 +164,14 @@ export class GameAreaComponent implements AfterViewInit {
                 },
               })
             );
+            break;
+          case '+':
+            this.goal = new Goal({
+              position: {
+                x: 44 * j, // Berücksichtigen Sie die Breite der Boundary
+                y: 44 * i, // Berücksichtigen Sie die Höhe der Boundary
+              },
+            });
             break;
         }
       });
@@ -185,11 +197,12 @@ export class GameAreaComponent implements AfterViewInit {
       boundary.draw(c);
     });
   
-    //this.handleInput(this.buttonText);
+    // Zeichne das Ziel unabhängig von der Überprüfung der Goal-Kollision
+    this.goal.draw(c);
+  
     this.player.update();
     this.player.checkBoundaryCollision(this.boundaries);
   
-    // Check if the goal is reached before continuing with the animation
     if (!this.animationActive || this.player.checkGoalCollision()) {
       return;
     }
@@ -258,8 +271,8 @@ class Player {
   radius: number;
   collision: boolean;
   private gameArea: GameAreaComponent;
+  goalReached: boolean = false;
 
-  
   constructor(
     { position, velocity }: { position: { x: number; y: number }; velocity: { x: number; y: number } },
     gameArea: GameAreaComponent) {
@@ -337,17 +350,23 @@ class Player {
   }
 
   checkGoalCollision(): boolean {
-
-    // calculates the distance between the center of the circle (player) and the closest point on the rectangle (goal)
-    const distanceX = this.position.x - this.gameArea.goal.position.x;
-    const distanceY = this.position.y - this.gameArea.goal.position.y;
+    if (this.goalReached) {
+      return false;
+    }
+    console.log(this.gameArea.goal.position.x, "goalposx")
+    console.log(this.gameArea.goal.position.y, "goalposy")
+    const distanceX = this.position.x - (this.gameArea.goal.position.x + 44);
+    const distanceY = this.position.y - (this.gameArea.goal.position.y + 44);
     const distanceSquared = distanceX * distanceX + distanceY * distanceY;
-
-    if (distanceSquared < this.radius * this.radius) {
-      // player reached the goal
+  
+    // Überprüfen Sie, ob die Distanz kleiner als die Summe der Radien von Spieler und Ziel ist
+    const combinedRadius = this.radius + Goal.width / 2; // Beachten Sie die Breite des Ziels
+    if (distanceSquared < combinedRadius * combinedRadius) {
       console.log('Goal reached!');
       alert("Spiel beendet");
-      this.gameArea.isPlayButtonDisabled = true; 
+      this.gameArea.isPlayButtonDisabled = true;
+      this.goalReached = true;
+      this.stopAnimation();
       return true;
     }
     return false;
