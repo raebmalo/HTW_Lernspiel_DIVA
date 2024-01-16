@@ -11,11 +11,37 @@ export class GameAreaComponent implements AfterViewInit {
   boundaries: Boundary[] = [];
   dynamicText: string = 'Initial text in the textbox';
   buttonText: string = ''; // Text that will be displayed in the right column
+  clickedLink: string | null = null;
+
+  onLinkClick(link: string) {
+    this.clickedLink = link;
+  }
+
+  ngOnInit(): void {
+    this.updateLevelLabels();
+    window.addEventListener('resize', this.updateLevelLabels);
+  }
+
+  private updateLevelLabels() {
+    const levelList = document.querySelector('.level-list') as HTMLUListElement;
+    const listItems = levelList.querySelectorAll('li');
+
+    listItems.forEach((item, index) => {
+      const link = item.querySelector('a') as HTMLAnchorElement;
+      if (window.innerWidth <= 1024) {
+        // Display only numbers on small screens
+        link.textContent = (index + 1).toString();
+      } else {
+        // Display "Level" text on larger screens
+        link.textContent = 'Level ' + (index + 1);
+      }
+    });
+  }
 
   updateText(text: string): void {
     // Update the text in the right column
-    if(!this.buttonText) this.buttonText = text;
-    else this.buttonText = this.buttonText + "\n" + text;
+    if (!this.buttonText) this.buttonText = text;
+    else this.buttonText = this.buttonText + '\n' + text;
   }
 
   constructor(private renderer: Renderer2) {}
@@ -200,4 +226,3 @@ class Boundary {
     c.fillRect(this.position.x, this.position.y, this.width, this.height);
   }
 }
-

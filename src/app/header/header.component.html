@@ -1,11 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
 <header>
-    <nav>
-      <ul>
-        <li><a [routerLink]="['/how-to-play']">How to Play</a></li>
-        <li><a [routerLink]="['/the-idea']">The Idea</a></li>
-        <li><a [routerLink]="['/play-the-game/level-1']">Play the game</a></li>
-        <li><a [routerLink]="['/about-us']">About Us</a></li>
-        <li><a [routerLink]="['/impressum']">Impressum</a></li>
-      </ul>
-    </nav>
-  </header>
+  <div class="burger-menu" (click)="toggleMenu()">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+  <nav>
+    <ul [ngClass]="{'show': isMenuOpen}">
+      <li><a [routerLink]="['/how-to-play']" (click)="closeMenu()">How to Play</a></li>
+      <li><a [routerLink]="['/the-idea']" (click)="closeMenu()">The Idea</a></li>
+      <li><a [routerLink]="['/play-the-game']" (click)="closeMenu()">Play the game</a></li>
+      <li><a [routerLink]="['/about-us']" (click)="closeMenu()">About Us</a></li>
+      <li><a [routerLink]="['/impressum']" (click)="closeMenu()">Impressum</a></li>
+    </ul>
+  </nav>
+</header>
+</body>
+</html>

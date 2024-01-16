@@ -1,0 +1,49 @@
+@import '../globalconfig.css';
+
+body {
+  font-family: 'PixelFont', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #84879d;
+}
+
+.textbox {
+  width: 90%;
+  padding: 5%;
+  color: #09103b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.textbox h3 {
+  color: #09103b;
+}
+
+.textbox ol {
+  list-style-type: decimal;
+  padding-left: 20px;
+}
+
+header {
+  color: #09103b;
+  text-align: center;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media only screen and (max-width: 600px) {
+  .textbox {
+    padding: 10px;
+  }
+
+  .textbox h2 {
+    font-size: 1em;
+  }
+
+  .textbox ol {
+    padding-left: 10px;
+  }
+}
