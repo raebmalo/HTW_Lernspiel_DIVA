@@ -130,6 +130,7 @@ export class GameAreaComponent implements AfterViewInit {
       newContext.drawImage(existingCanvas, 0, 0);
     }
 
+    // inserts the canvas and deletes the old one
     this.renderer.insertBefore(parent!, newCanvas, existingCanvas);
     this.renderer.removeChild(parent!, existingCanvas);
 
@@ -143,10 +144,10 @@ export class GameAreaComponent implements AfterViewInit {
       ['-','-','-',' ','-',' ','-','-',' ','-'],
       ['-',' ',' ',' ','-',' ','-','-',' ','-'],
       ['-',' ','-','-','-',' ','-','-',' ','-'],
-      ['-','+',' ',' ',' ',' ',' ',' ',' ','-'],
+      ['-',' ',' ',' ',' ',' ',' ',' ',' ','-'],
       ['-','-','-','-','-','-','-','-',' ','-'],
       ['-','-',' ',' ',' ','-',' ',' ',' ','-'],
-      ['-',' ',' ','-',' ',' ',' ','-',' ','-'],
+      ['-','+',' ','-',' ',' ',' ','-',' ','-'],
       ['-','-','-','-','-','-','-','-','-','-'],
     ];
 
@@ -215,11 +216,11 @@ export class GameAreaComponent implements AfterViewInit {
   }
 
   stopAnimation(): void {
-    this.animationActive = false; // Animation stoppen
+    this.animationActive = false; // stops animation
   }
   
   startAnimation(): void {
-    this.animationActive = true; // Animation starten
+    this.animationActive = true; // starts animation
     this.animate();
   }
 }
@@ -369,22 +370,20 @@ class Player {
     if (this.goalReached) {
       return false;
     }
-  
-    const distanceX = this.position.x - (this.gameArea.goal.position.x + 44);
-    const distanceY = this.position.y - (this.gameArea.goal.position.y + 44);
-    const distanceSquared = distanceX * distanceX + distanceY * distanceY;
-  
-    const combinedRadius = this.radius + Goal.width / 2;
-  
-    if (distanceSquared < combinedRadius * combinedRadius) {
+    console.log("x: "+this.gameArea.goal.position.x + 22);
+    console.log("y: "+this.gameArea.goal.position.y + 22);
+
+    const distanceX = this.position.x - (this.gameArea.goal.position.x + 22);
+    const distanceY = this.position.y - (this.gameArea.goal.position.y + 22);
+    console.log("x distance: "+distanceX);
+    console.log("y distance: "+distanceY);
+
+    if (distanceX == 0 && distanceY == 0) {
       console.log('Goal reached!');
-  
-      this.showToast()
-      alert("Ziel erreicht")
+      
+      alert("Ziel erreicht");
       this.gameArea.isPlayButtonDisabled = true;
       this.goalReached = true;
-      this.stopAnimation();
-      
       return true;
     }
     return false;
