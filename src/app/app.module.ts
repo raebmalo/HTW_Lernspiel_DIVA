@@ -9,6 +9,8 @@ import { TheIdeaComponent } from './the-idea/the-idea.component';
 import { AboutUsComponent } from './about-us/about-us.component';
 import { ImpressumComponent } from './impressum/impressum.component';
 import { GameAreaComponent } from './game-area/game-area.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { GameAreaComponent } from './game-area/game-area.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule, // Fügen Sie BrowserAnimationsModule hinzu
+    ToastrModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent]

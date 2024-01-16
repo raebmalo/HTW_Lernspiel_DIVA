@@ -15,7 +15,6 @@
         </svg>
     </div>
 </div>
-
 <div class="container">
     <div class="textbox">
         <h2>Level 1</h2>
@@ -31,9 +30,9 @@
                 <button class="button" (click)="updateText('move')">Move</button>
             </div>
         </div>
-        <div class="right-column">
+        <div class="right-column"  #rightColumn>
             <h3>Code:<br></h3>
-            <p style="width: 500px;white-space: pre-line">{{ buttonText }}</p>
+            <p textButtonstyle="width: 500px;white-space: pre-line">{{ buttonText }}</p>
             <div class="trashButton" (click)="deleteText()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M16 2v4h6v2h-2v14H4V8H2V6h6V2zm-2 2h-4v2h4zm0 4H6v12h12V8zm-5 2h2v8H9zm6 0h-2v8h2z"/>

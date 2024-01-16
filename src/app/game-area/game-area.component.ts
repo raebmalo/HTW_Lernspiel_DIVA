@@ -1,5 +1,7 @@
 import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef } from '@angular/core';
 import { timeout } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+
 
 @Component({
   selector: 'app-game-area',
@@ -39,7 +41,9 @@ export class GameAreaComponent implements AfterViewInit {
   
   deleteText(): void {
     this.buttonText = [];
+    this.updateRightColumn();
   }
+
 
   startGame() {
     this.animateAction(0, 44);
@@ -87,15 +91,17 @@ export class GameAreaComponent implements AfterViewInit {
     }, 16); // 60 fps
   }
 
-  constructor(private renderer: Renderer2) {
+  constructor(private toastr: ToastrService, private renderer: Renderer2) {
     this.player = new Player(
       {
         position: { x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 },
         velocity: { x: 0, y: 0 },
       },
-      this // Übergeben Sie eine Referenz auf das GameAreaComponent-Objekt
+      this,
+      toastr // Übergeben Sie eine Referenz auf das GameAreaComponent-Objekt
     );
   }
+ 
 
   ngAfterViewInit() {
     const existingCanvas = this.canvasRef.nativeElement;
@@ -121,7 +127,7 @@ export class GameAreaComponent implements AfterViewInit {
       ['-','-','-',' ','-',' ','-','-',' ','-'],
       ['-',' ',' ',' ','-',' ','-','-',' ','-'],
       ['-',' ','-','-','-',' ','-','-',' ','-'],
-      ['-',' ',' ','+',' ',' ',' ',' ',' ','-'],
+      ['-','+',' ',' ',' ',' ',' ',' ',' ','-'],
       ['-','-','-','-','-','-','-','-',' ','-'],
       ['-','-',' ',' ',' ','-',' ',' ',' ','-'],
       ['-',' ',' ','-',' ',' ',' ','-',' ','-'],
@@ -188,8 +194,6 @@ export class GameAreaComponent implements AfterViewInit {
     requestAnimationFrame(() => this.animate());
   }
   
-
-
   stopAnimation(): void {
     this.animationActive = false; // Animation stoppen
   }
@@ -249,7 +253,8 @@ class Player {
 
   constructor(
     { position, velocity }: { position: { x: number; y: number }; velocity: { x: number; y: number } },
-    gameArea: GameAreaComponent // Fügen Sie eine zusätzliche Parameter für die GameArea hinzu
+    gameArea: GameAreaComponent, // Fügen Sie eine zusätzliche Parameter für die GameArea hinzu
+    private toastr: ToastrService
   ) {
     this.position = position;
     this.velocity = velocity;
@@ -293,6 +298,10 @@ class Player {
     this.position = { x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 };
   }
   checkBoundaryCollision(boundaries: Boundary[]): void {
+    if (this.collision) {
+      return; // Wenn eine Kollision bereits erkannt wurde, tue nichts
+    }
+  
     for (const boundary of boundaries) {
       // Calculate the distance between the center of the circle (player) and the closest point on the rectangle (boundary)
       const closestX = Math.max(boundary.position.x, Math.min(this.position.x, boundary.position.x + boundary.width));
@@ -307,52 +316,51 @@ class Player {
       if (distanceSquared < this.radius * this.radius) {
         // Print information for debugging
         console.log("Collision detected!");
-        //console.log("Player position:", this.position);
-        //console.log("Boundary position:", boundary.position);
-  
+    
         // Uncomment the following line to reset the player's position upon collision
         // this.resetToStartPosition();
-  
+    
         // Adjust player velocity after collision (set to 0 for simplicity)
         this.collision = true;
-        //this.stopAnimation()
+        alert("Kollision Spiel beendet");
         this.gameArea.isPlayButtonDisabled = true;
         this.resetVel();
-        this.draw()
-        //this.resetToStartPosition()
-        // You can add additional logic here based on your requirements
+        this.draw();
+        this.stopAnimation();
+        return; // Verlasse die Schleife, da die Kollision bereits erkannt wurde
       }
     }
   }
-
+  showToast(): void {
+    this.toastr.success('Herzlichen Glückwunsch!', 'Spiel beendet', {
+      positionClass: 'toast-center', // Fügen Sie diese Zeile hinzu
+    });
+  }
   checkGoalCollision(): boolean {
     if (this.goalReached) {
       return false;
     }
-    console.log(this.gameArea.goal.position.x, "goalposx")
-    console.log(this.gameArea.goal.position.y, "goalposy")
+  
     const distanceX = this.position.x - (this.gameArea.goal.position.x + 44);
     const distanceY = this.position.y - (this.gameArea.goal.position.y + 44);
     const distanceSquared = distanceX * distanceX + distanceY * distanceY;
   
-    // Überprüfen Sie, ob die Distanz kleiner als die Summe der Radien von Spieler und Ziel ist
-    const combinedRadius = this.radius + Goal.width / 2; // Beachten Sie die Breite des Ziels
+    const combinedRadius = this.radius + Goal.width / 2;
+  
     if (distanceSquared < combinedRadius * combinedRadius) {
       console.log('Goal reached!');
-      alert("Spiel beendet");
+  
+      this.showToast()
+      alert("Ziel erreicht")
       this.gameArea.isPlayButtonDisabled = true;
       this.goalReached = true;
       this.stopAnimation();
+      
       return true;
     }
-  
+    
     return false;
   }
   
-  
-  
-
-  
- 
 }
 
