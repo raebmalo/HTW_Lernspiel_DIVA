@@ -1,6 +1,15 @@
 # DIVALernspiel
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.1.
+## Description
+
+The Diva-e Learning Game is an interactive and engaging experience designed to deliver educational content in a playful manner. Developed by a Group of Students for Diva-e, this game employs cutting-edge technologies to provide an immersive learning experience.
+
+## Features
+
+- 🚀 Interactive programming learning 
+- 🎮 Fun and challenging game mechanics
+- 🖥️ Responsive design for various devices
 
 ## Development server
 
