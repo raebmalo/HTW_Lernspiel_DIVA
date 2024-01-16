@@ -371,17 +371,20 @@ class Player {
     });
   }
   checkGoalCollision(): boolean {
+    // if goal reached then dont check for it anymore
     if (this.goalReached) {
       return false;
     }
     console.log("x: "+this.gameArea.goal.position.x + 22);
     console.log("y: "+this.gameArea.goal.position.y + 22);
 
+    // calculate x and y distance to the finish-square
     const distanceX = this.position.x - (this.gameArea.goal.position.x + 22);
     const distanceY = this.position.y - (this.gameArea.goal.position.y + 22);
     console.log("x distance: "+distanceX);
     console.log("y distance: "+distanceY);
 
+    // if finish reached, create alert
     if (distanceX == 0 && distanceY == 0) {
       console.log('Goal reached!');
       
