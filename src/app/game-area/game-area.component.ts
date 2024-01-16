@@ -157,9 +157,12 @@ export class GameAreaComponent implements AfterViewInit {
 
     // paints the canvas with each boundary being 44 pixels wide/high
     map.forEach((row, i) => {
+      //for each row
       row.forEach((symbol, j) => {
+        // for each symbol
         switch (symbol) {
           case '-':
+            // create boundary if symbol == "-"
             this.boundaries.push(
               new Boundary({
                 position: {
@@ -170,6 +173,7 @@ export class GameAreaComponent implements AfterViewInit {
             );
             break;
           case '+':
+            // create goal if symbol == "+"
             this.goal = new Goal({
               position: {
                 x: 44 * j, // Berücksichtigen Sie die Breite der Boundary
