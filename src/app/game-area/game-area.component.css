@@ -143,16 +143,12 @@ ul {
   margin: 0;
   padding: 10px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   background-color: #020411;
-  outline-color: black;
-  outline-style: solid;
-  outline-width: 5px;
-  overflow-x: auto;
 }
 
 .toast-success {
-  background-color: #28a745 !important; /* Ändern Sie die Farbe nach Ihren Wünschen */
+  background-color: #28a745 !important;
 }
 
 li {
