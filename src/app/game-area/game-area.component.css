@@ -6,6 +6,11 @@ body {
   padding: 0;
   background-color: #f0f0f0;
 }
+.toast-center {
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
 
 .parentdiv {
   padding: 10px;
@@ -30,6 +35,11 @@ body {
 
 .resetdiv:hover, .playdiv:hover {
   background-color: #cdcfd7;
+}
+
+.playdiv.disabled {
+  background-color: grey; /* Set the background color to grey for the disabled state */
+  cursor: not-allowed;   /* Change the cursor to indicate it's not clickable */
 }
 
 canvas {
@@ -77,6 +87,12 @@ canvas {
 }
 
 .right-column {
+  position: relative; /* Add position relative to allow absolute positioning */
+  width: 80%;
+  color: #09103b;
+  background-color: #dcdcdc;
+  font-family: 'PixelFont', sans-serif;
+  padding: 20px;
   overflow-y: auto;
 }
 
@@ -85,6 +101,19 @@ canvas {
   flex-direction: column;
   gap: 10px;
   width: 100%;
+}
+
+.trashButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  height: 40px;
+  width: 40px;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .button {
@@ -118,7 +147,9 @@ ul {
 li {
   margin: 0 5px;
 }
-
+.toast-success {
+  background-color: #28a745 !important; /* Ändern Sie die Farbe nach Ihren Wünschen */
+}
 li a {
   display: block;
   color: #cdcfd7;
