@@ -20,7 +20,7 @@ export class gameService {
 
   async getGame(id: string) {
     try {
-      const game = await Gamee.findById({id:id})
+      const game = await Gamee.findById({_id:id})
       if (!game) {
         return 'game not available'
       }
@@ -32,7 +32,7 @@ export class gameService {
 
   async updateGame(id: string, data: any) {
     try {
-      const gamez = await Gamee.findByIdAndUpdate({id:id}, data, {new: true})
+      const gamez = await Gamee.findByIdAndUpdate({_id:id}, data, {new: true})
       if(!gamez){
         return "post not available"
       }

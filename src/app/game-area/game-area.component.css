@@ -6,6 +6,7 @@ body {
   padding: 0;
   background-color: #f0f0f0;
 }
+
 .toast-center {
   top: 50% !important;
   left: 50% !important;
@@ -13,22 +14,28 @@ body {
 }
 
 .parentdiv {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-column-gap: 10px;
+  justify-content: space-evenly;
   padding: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
+}
+
+.resetdiv svg, .playdiv svg {
+  width: 100%;
+  height: auto;
 }
 
 .resetdiv, .playdiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   height: 10vw;
   width: 10vw;
   max-height: 100px;
   max-width: 100px;
-  border-radius: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 5px;
   cursor: pointer;
   margin-top: 150px;
 }
@@ -64,6 +71,7 @@ canvas {
   outline-style: solid;
   padding: 15px;
   outline-width: 5px;
+  margin: 10px;
 }
 
 .textbox h2 {
@@ -72,27 +80,26 @@ canvas {
 
 .contentbox {
   display: flex;
-  flex-direction: column;
-  margin: 5px auto 0;
   padding: 10px;
 }
 
-.left-column, .right-column {
+.left-column {
+  width: 40%;
+  background-color: #dcdcdc;
+  font-family: 'PixelFont', sans-serif;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  background-color: #dcdcdc;
-  font-family: 'PixelFont', sans-serif;
 }
 
 .right-column {
-  position: relative; /* Add position relative to allow absolute positioning */
-  width: 80%;
+  position: relative;
+  width: 60%;
   color: #09103b;
   background-color: #dcdcdc;
   font-family: 'PixelFont', sans-serif;
-  padding: 20px;
+  padding: 5px 20px 20px 20px;
   overflow-y: auto;
 }
 
@@ -109,7 +116,7 @@ canvas {
   right: 10px;
   height: 40px;
   width: 40px;
-  border-radius: 25px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -118,7 +125,7 @@ canvas {
 
 .button {
   padding: 10px;
-  border-radius: 25px;
+  border-radius: 5px;
   font-family: 'PixelFont', sans-serif;
   background-color: #84879d;
   font-weight: bold;
@@ -136,20 +143,18 @@ ul {
   margin: 0;
   padding: 10px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   background-color: #020411;
-  outline-color: black;
-  outline-style: solid;
-  outline-width: 5px;
-  overflow-x: auto;
+}
+
+.toast-success {
+  background-color: #28a745 !important;
 }
 
 li {
   margin: 0 5px;
 }
-.toast-success {
-  background-color: #28a745 !important; /* Ändern Sie die Farbe nach Ihren Wünschen */
-}
+
 li a {
   display: block;
   color: #cdcfd7;
@@ -187,9 +192,11 @@ li a:hover {
 
 @media (max-width: 600px) {
   .resetdiv, .playdiv {
-    height: 15vw;
-    width: 15vw;
-    margin-top: 0;
+    margin-top: 300%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 }
 
