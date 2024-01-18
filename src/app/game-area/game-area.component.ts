@@ -18,7 +18,6 @@ export class GameAreaComponent implements AfterViewInit {
   isPlayButtonDisabled: boolean = false;
   goal!: Goal;
   dynamicText: string = 'Initial text in the textbox';
-  buttonText: string = ''; // Text that will be displayed in the right column
   clickedLink: string | null = null;
 
   onLinkClick(link: string) {
