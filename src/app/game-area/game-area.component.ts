@@ -160,6 +160,10 @@ export class GameAreaComponent implements AfterViewInit {
       //for each row
       row.forEach((symbol, j) => {
         // for each symbol
+        // Draw chessboard pattern for space
+      if (symbol == ' ' || symbol == '-') {
+        this.chesspattern(i,j);
+      }
         switch (symbol) {
           case '-':
             // create boundary if symbol == "-"
@@ -200,7 +204,7 @@ export class GameAreaComponent implements AfterViewInit {
     }
   
     const c: CanvasRenderingContext2D = this.canvasRef.nativeElement.getContext('2d')!;
-    c.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
+    //c.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
     this.boundaries.forEach((boundary) => {
       boundary.draw(c);
     });
@@ -217,6 +221,16 @@ export class GameAreaComponent implements AfterViewInit {
   
     this.player.draw();
     requestAnimationFrame(() => this.animate());
+  }
+  
+  private chesspattern(row: number, column: number): void {
+    const c: CanvasRenderingContext2D = this.canvasRef.nativeElement.getContext('2d')!;
+    c.fillStyle = (row + column) % 2 === 0 ? 'white' : 'lightgrey';
+    //console.log((row + column) % 2 === 0);
+    //console.log(c.fillStyle);
+    c.fillRect(44 * column, 44 * row, Boundary.width, Boundary.height);
+    //console.log("x: "+44*column+" y: "+44*row);
+    //console.log("width: "+Boundary.width+" height: "+Boundary.height);
   }
 
   stopAnimation(): void {
@@ -375,14 +389,14 @@ class Player {
     if (this.goalReached) {
       return false;
     }
-    console.log("x: "+this.gameArea.goal.position.x + 22);
-    console.log("y: "+this.gameArea.goal.position.y + 22);
+    //console.log("x: "+this.gameArea.goal.position.x + 22);
+    //console.log("y: "+this.gameArea.goal.position.y + 22);
 
     // calculate x and y distance to the finish-square
     const distanceX = this.position.x - (this.gameArea.goal.position.x + 22);
     const distanceY = this.position.y - (this.gameArea.goal.position.y + 22);
-    console.log("x distance: "+distanceX);
-    console.log("y distance: "+distanceY);
+    //console.log("x distance: "+distanceX);
+    //console.log("y distance: "+distanceY);
 
     // if finish reached, create alert
     if (distanceX == 0 && distanceY == 0) {
