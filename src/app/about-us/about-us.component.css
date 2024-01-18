@@ -1,0 +1,108 @@
+@import '../globalconfig.css';
+
+body {
+  font-family: 'PixelFont', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #84879d;
+}
+
+header {
+  color: #09103b;
+  text-align: center;
+  padding: 20px;
+}
+
+.about-us {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.textbox {
+  width: 90%;
+  padding: 5%;
+  color: #09103b;
+}
+
+.textbox h2 {
+  text-align: center;
+  color: #09103b;
+}
+
+.textbox p {
+  line-height: 1.5;
+  color: #09103b;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.column {
+  flex: 0 0 100%;
+  max-width: 100%;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+  text-align: center;
+  background-color: #ecf0f1;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.card img {
+  width: 100%;
+  border-radius: 50%;
+}
+
+.container {
+  padding: 15px;
+}
+
+.container h2 {
+  font-size: 1em;
+  margin: 10px 0;
+  color: #020411;
+}
+
+.container p {
+  margin: 5px 0;
+}
+
+.button {
+  background-color: #84879d;
+  color: #ffffff;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.button:hover {
+  background-color: #6b72a4;
+  color: #ffffff;
+}
+
+@media screen and (min-width: 600px) {
+  .column {
+    flex: 0 0 48%;
+    max-width: 48%;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .column {
+    flex: 0 0 30%;
+    max-width: 30%;
+  }
+}
