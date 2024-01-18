@@ -223,7 +223,7 @@ export class GameAreaComponent implements AfterViewInit {
   
   private chesspattern(row: number, column: number): void {
     const c: CanvasRenderingContext2D = this.canvasRef.nativeElement.getContext('2d')!;
-    c.fillStyle = (row + column) % 2 === 0 ? 'white' : 'lightgrey';
+    c.fillStyle = (row + column) % 2 === 0 ? 'white' : '#EEEEEE';
     //console.log((row + column) % 2 === 0);
     //console.log(c.fillStyle);
     c.fillRect(44 * column, 44 * row, Boundary.width, Boundary.height);
