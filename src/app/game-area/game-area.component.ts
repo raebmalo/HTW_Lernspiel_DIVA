@@ -206,7 +206,7 @@ export class GameAreaComponent implements AfterViewInit {
       return;
     }
     const c: CanvasRenderingContext2D = this.canvasRef.nativeElement.getContext('2d')!;
-    //c.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
+    c.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
     this.boundaries.forEach((boundary) => {
       boundary.draw(c);
     });
