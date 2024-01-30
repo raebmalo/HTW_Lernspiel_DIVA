@@ -13,16 +13,23 @@ export class GameAreaComponent implements AfterViewInit {
 
   boundaries: Boundary[] = [];
   buttonText: string[] = [];
+  icons: Icon[] = [];
   player!: Player;
   animationActive: boolean = true;
   isPlayButtonDisabled: boolean = false;
   goal!: Goal;
   dynamicText: string = 'Initial text in the textbox';
   clickedLink: string | null = null;
+  
+  svgString: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+  <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0 
+  2v2h2v2h2V6h2V4h4v2h2v6h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3V6h2V4z"/>
+  </svg>`;;
+  // map two dimensional array
   map: string[][] = [
     ['-','-','-','-','-','-','-','-','-','-'],
-    ['-',' ',' ',' ','-',' ','-',' ',' ','-'],
-    ['-','-','-',' ','-',' ','-','-',' ','-'],
+    ['-',' ',' ',' ','-',' ','-',' ','i','-'],
+    ['-','-','-','i','-','i','-','-',' ','-'],
     ['-',' ',' ',' ','-',' ','-','-',' ','-'],
     ['-',' ','-','-','-',' ','-','-',' ','-'],
     ['-',' ',' ',' ',' ',' ',' ',' ',' ','-'],
@@ -153,26 +160,12 @@ export class GameAreaComponent implements AfterViewInit {
     this.canvasRef.nativeElement = newCanvas;
     const c: CanvasRenderingContext2D = newCanvas.getContext('2d')!;
 
-    // map two dimensional array
-    const map: string[][] = [
-      ['-','-','-','-','-','-','-','-','-','-'],
-      ['-',' ',' ',' ','-',' ','-',' ',' ','-'],
-      ['-','-','-',' ','-',' ','-','-',' ','-'],
-      ['-',' ',' ',' ','-',' ','-','-',' ','-'],
-      ['-',' ','-','-','-',' ','-','-',' ','-'],
-      ['-',' ',' ',' ',' ',' ',' ',' ',' ','-'],
-      ['-','-','-','-','-','-','-','-',' ','-'],
-      ['-','-',' ',' ',' ','-',' ',' ',' ','-'],
-      ['-','+',' ','-',' ',' ',' ','-',' ','-'],
-      ['-','-','-','-','-','-','-','-','-','-'],
-    ];
-
     // calculates width of the canvas by multiplying the pixel width and height by the number of columns and rows
-    newCanvas.width = map[0].length * Boundary.width;
-    newCanvas.height = map.length * Boundary.height;
+    newCanvas.width = this.map[0].length * Boundary.width;
+    newCanvas.height = this.map.length * Boundary.height;
 
     // paints the canvas with each boundary being 44 pixels wide/high
-    map.forEach((row, i) => {
+    this.map.forEach((row, i) => {
       //for each row
       row.forEach((symbol, j) => {
         switch (symbol) {
@@ -196,15 +189,20 @@ export class GameAreaComponent implements AfterViewInit {
               },
             });
             break;
+          case 'i':
+            // create goal if symbol == "+"
+            this.icons.push(
+              new Icon({
+                position: {
+                  x: 44 * j,
+                  y: 44 * i,
+                },
+              })
+            );
+            break;
         }
       });
     });
-
-    // paints the boundary in a color
-    this.boundaries.forEach(boundary => {
-      boundary.draw(c);
-    });
-
     requestAnimationFrame(() => this.animate());
   }
 
@@ -225,6 +223,9 @@ export class GameAreaComponent implements AfterViewInit {
     });
     // print goal and update player
     this.goal.draw(c);
+    this.icons.forEach((icon) => {
+      icon.drawSVGIconOnCanvas(this.svgString,c);
+    });
     this.player.update();
     this.player.checkBoundaryCollision(this.boundaries);
     if (!this.animationActive || this.player.checkGoalCollision()) {
@@ -299,6 +300,47 @@ class Goal {
   draw(c: CanvasRenderingContext2D): void {
     c.fillStyle = 'green';
     c.fillRect(this.position.x, this.position.y, this.width, this.height);
+  }
+}
+
+class Icon {
+  // width and height of goal
+  static width: number = 32;
+  static height: number = 32;
+
+  position: { x: number; y: number };
+  width: number;
+  height: number;
+
+  constructor({ position }: { position: { x: number; y: number } }) {
+    this.position = position;
+    this.width = 32;
+    this.height = 32;
+  }
+
+  // draw svg on canvas
+  drawSVGIconOnCanvas(svgString: string, c: CanvasRenderingContext2D): void {
+    const img = new Image();
+    // decode svg string
+    const decodedSvg = decodeURIComponent(svgString);
+    // code svg string
+    img.src = 'data:image/svg+xml;base64,' + btoa(decodedSvg);
+
+    //draws image
+    
+    if (c) {
+      // calculate the center position of a square
+      const centerX = this.position.x + Boundary.width / 2;
+      const centerY = this.position.y + Boundary.height / 2;
+      // Adjust for the size of the SVG (32x32)
+      const imageX = centerX - Icon.width/2; // 32/2 = 16
+      const imageY = centerY - Icon.height/2; // 32/2 = 16
+      // Draw the image centered in the box
+      c.drawImage(img, imageX, imageY);
+    }
+    img.onerror = (e) => {
+      console.error('Error loading SVG image', e);
+    };
   }
 }
 class Player {
