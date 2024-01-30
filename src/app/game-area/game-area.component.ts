@@ -19,6 +19,18 @@ export class GameAreaComponent implements AfterViewInit {
   goal!: Goal;
   dynamicText: string = 'Initial text in the textbox';
   clickedLink: string | null = null;
+  map: string[][] = [
+    ['-','-','-','-','-','-','-','-','-','-'],
+    ['-',' ',' ',' ','-',' ','-',' ',' ','-'],
+    ['-','-','-',' ','-',' ','-','-',' ','-'],
+    ['-',' ',' ',' ','-',' ','-','-',' ','-'],
+    ['-',' ','-','-','-',' ','-','-',' ','-'],
+    ['-',' ',' ',' ',' ',' ',' ',' ',' ','-'],
+    ['-','-','-','-','-','-','-','-',' ','-'],
+    ['-','-',' ',' ',' ','-',' ',' ',' ','-'],
+    ['-','+',' ','-',' ',' ',' ','-',' ','-'],
+    ['-','-','-','-','-','-','-','-','-','-'],
+  ];
 
   onLinkClick(link: string) {
     this.clickedLink = link;
@@ -129,6 +141,7 @@ export class GameAreaComponent implements AfterViewInit {
     const existingContext = existingCanvas.getContext('2d');
     const newContext = newCanvas.getContext('2d');
 
+
     if (existingContext && newContext) {
       newContext.drawImage(existingCanvas, 0, 0);
     }
@@ -162,11 +175,6 @@ export class GameAreaComponent implements AfterViewInit {
     map.forEach((row, i) => {
       //for each row
       row.forEach((symbol, j) => {
-        // for each symbol
-        // Draw chessboard pattern for space
-      if (symbol == ' ' || symbol == '-') {
-        this.chesspattern(i,j);
-      }
         switch (symbol) {
           case '-':
             // create boundary if symbol == "-"
@@ -206,11 +214,16 @@ export class GameAreaComponent implements AfterViewInit {
       return;
     }
     const c: CanvasRenderingContext2D = this.canvasRef.nativeElement.getContext('2d')!;
+
+    // clears rectangle on each frame 
     c.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
+    //prints chesspattern
+    this.chesspattern(this.map);
+    //prints boundaries
     this.boundaries.forEach((boundary) => {
       boundary.draw(c);
     });
-    // Zeichne das Ziel unabhängig von der Überprüfung der Goal-Kollision
+    // print goal and update player
     this.goal.draw(c);
     this.player.update();
     this.player.checkBoundaryCollision(this.boundaries);
@@ -221,14 +234,17 @@ export class GameAreaComponent implements AfterViewInit {
     requestAnimationFrame(() => this.animate());
   }
   
-  private chesspattern(row: number, column: number): void {
+  private chesspattern(map: String[][]): void {
     const c: CanvasRenderingContext2D = this.canvasRef.nativeElement.getContext('2d')!;
-    c.fillStyle = (row + column) % 2 === 0 ? 'white' : '#EEEEEE';
-    //console.log((row + column) % 2 === 0);
-    //console.log(c.fillStyle);
-    c.fillRect(44 * column, 44 * row, Boundary.width, Boundary.height);
-    //console.log("x: "+44*column+" y: "+44*row);
-    //console.log("width: "+Boundary.width+" height: "+Boundary.height);
+    map.forEach((row, i) => {
+      //for each row
+      row.forEach((symbol, j) => {
+        // for each symbol
+        // Draw chessboard pattern
+      c.fillStyle = (i + j) % 2 === 0 ? 'white' : '#EEEEEE';
+      c.fillRect(44 * i, 44 * j, Boundary.width, Boundary.height);
+    });
+  });
   }
 
   stopAnimation(): void {
