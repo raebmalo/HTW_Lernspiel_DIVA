@@ -13,40 +13,8 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'play-the-game',
-    component: GameAreaComponent,
-    children: [
-      {
-        path:'level-1', component: GameAreaComponent
-      },
-      {
-        path:'level-2', component: GameAreaComponent
-      },
-      {
-        path:'level-3', component: GameAreaComponent
-      },
-      {
-        path:'level-4', component: GameAreaComponent
-      },
-      {
-        path:'level-5', component: GameAreaComponent
-      },
-      {
-        path:'level-6', component: GameAreaComponent
-      },
-      {
-        path:'level-7', component: GameAreaComponent
-      },
-      {
-        path:'level-8', component: GameAreaComponent
-      },
-      {
-        path:'level-9', component: GameAreaComponent
-      },
-      {
-        path:'level-10', component: GameAreaComponent
-      }
-    ]
+    path: 'play-the-game/:level',
+    component: GameAreaComponent
   },
   {
     path: 'how-to-play',

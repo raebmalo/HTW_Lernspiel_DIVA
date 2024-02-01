@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+<div class="container">
+  <div class="textbox">
+    <h2>{{game.level}}</h2>
+    <p>{{game.description}}</p>
+  </div>
+</div>
 <div class="parentdiv">
   <div class="resetdiv" >
     <svg (click)="resetGame()" xmlns="http://www.w3.org/2000/svg" width="100px" height="100px" viewBox="0 0 24 24">
@@ -18,12 +24,6 @@
     <svg (click)="startGame()" [class.disabled]="isPlayButtonDisabled" xmlns="http://www.w3.org/2000/svg" width="100px" height="100px" viewBox="0 0 24 24">
       <path stroke="#09103B" fill="#09103B" d="M10 20H8V4h2v2h2v3h2v2h2v2h-2v2h-2v3h-2v2z"/>
     </svg>
-  </div>
-</div>
-<div class="container">
-  <div class="textbox">
-    <h2>Level 1</h2>
-    <p>Navigiere den Spieler durch die Hindernisse bis hin zum Ziel!</p>
   </div>
 </div>
 <div class="contentbox">
@@ -50,13 +50,6 @@
   <li><a [routerLink]="['/play-the-game/level-1']" (click)="onLinkClick('link1')" [class.clicked]="clickedLink === 'link1'">1</a></li>
   <li><a [routerLink]="['/play-the-game/level-2']" (click)="onLinkClick('link2')" [class.clicked]="clickedLink === 'link2'">2</a></li>
   <li><a [routerLink]="['/play-the-game/level-3']" (click)="onLinkClick('link3')" [class.clicked]="clickedLink === 'link3'">3</a></li>
-  <li><a [routerLink]="['/play-the-game/level-4']" (click)="onLinkClick('link4')" [class.clicked]="clickedLink === 'link4'">4</a></li>
-  <li><a [routerLink]="['/play-the-game/level-5']" (click)="onLinkClick('link5')" [class.clicked]="clickedLink === 'link5'">5</a></li>
-  <li><a [routerLink]="['/play-the-game/level-6']" (click)="onLinkClick('link6')" [class.clicked]="clickedLink === 'link6'">6</a></li>
-  <li><a [routerLink]="['/play-the-game/level-7']" (click)="onLinkClick('link7')" [class.clicked]="clickedLink === 'link7'">7</a></li>
-  <li><a [routerLink]="['/play-the-game/level-8']" (click)="onLinkClick('link8')" [class.clicked]="clickedLink === 'link8'">8</a></li>
-  <li><a [routerLink]="['/play-the-game/level-9']" (click)="onLinkClick('link9')" [class.clicked]="clickedLink === 'link9'">9</a></li>
-  <li><a [routerLink]="['/play-the-game/level-10']" (click)="onLinkClick('link10')" [class.clicked]="clickedLink === 'link10'">10</a></li>
 </ul>
 </body>
 </html>

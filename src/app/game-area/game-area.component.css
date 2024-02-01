@@ -143,7 +143,7 @@ ul {
   margin: 0;
   padding: 10px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   background-color: #020411;
 }
 
@@ -163,7 +163,6 @@ li a {
   text-align: center;
   padding: 3% 5%;
   text-decoration: none;
-  font-size: 12px;
 }
 
 li a.clicked {
@@ -204,7 +203,6 @@ li a:hover {
   .level-list li a {
     display: inline-block;
     padding: 5px;
-    font-size: 10px;
   }
 }
 

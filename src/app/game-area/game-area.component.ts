@@ -1,6 +1,9 @@
 import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef } from '@angular/core';
 import { timeout } from 'rxjs'; // also not used?
 import { ToastrService } from 'ngx-toastr';
+import {GameService} from "../services/game.service";
+import {Game} from "../models/game.model";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-game-area',
@@ -11,6 +14,22 @@ import { ToastrService } from 'ngx-toastr';
 export class GameAreaComponent implements AfterViewInit {
   @ViewChild('myCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
+  // needed for rendering the player figure
+  constructor(
+    private toastr: ToastrService,
+    private renderer: Renderer2,
+    private gameService: GameService,
+    private route: ActivatedRoute) {
+    this.player = new Player(
+      {
+        position: { x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 },
+        velocity: { x: 0, y: 0 },
+      },
+      this,
+      toastr // Übergeben Sie eine Referenz auf das GameAreaComponent-Objekt
+    );
+  }
+
   boundaries: Boundary[] = [];
   buttonText: string[] = [];
   icons: Icon[] = [];
@@ -20,11 +39,12 @@ export class GameAreaComponent implements AfterViewInit {
   goal!: Goal;
   dynamicText: string = 'Initial text in the textbox';
   clickedLink: string | null = null;
-  
+  game!: Game;
+
   svgString: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-  <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0 
+  <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0
   2v2h2v2h2V6h2V4h4v2h2v6h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3V6h2V4z"/>
-  </svg>`;;
+  </svg>`;
   // map two dimensional array
   map: string[][] = [
     ['-','-','-','-','-','-','-','-','-','-'],
@@ -38,6 +58,23 @@ export class GameAreaComponent implements AfterViewInit {
     ['-','+',' ','-',' ',' ',' ','-',' ','-'],
     ['-','-','-','-','-','-','-','-','-','-'],
   ];
+
+  ngOnInit(): void {
+    this.route.url.subscribe(urlSegments => {
+      const levelParam = urlSegments.map(segment => segment.path)[1];
+      if (levelParam) {
+        this.gameService.getGameByLevelFromDatabase(levelParam).subscribe(
+          (game: Game) => {
+            this.game = game;
+            console.log('Loaded game:', game);
+          },
+          error => {
+            console.error('Error loading game:', error);
+          }
+        );
+      }
+    });
+  }
 
   onLinkClick(link: string) {
     this.clickedLink = link;
@@ -127,18 +164,6 @@ export class GameAreaComponent implements AfterViewInit {
     }, 16); // 60 fps
   }
 
-  // needed for rendering the player figure
-  constructor(private toastr: ToastrService, private renderer: Renderer2) {
-    this.player = new Player(
-      {
-        position: { x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 },
-        velocity: { x: 0, y: 0 },
-      },
-      this,
-      toastr // Übergeben Sie eine Referenz auf das GameAreaComponent-Objekt
-    );
-  }
-
   ngAfterViewInit() {
     // initializes the html canvas and replaces the existing canvas with the new one
     const existingCanvas = this.canvasRef.nativeElement;
@@ -213,7 +238,7 @@ export class GameAreaComponent implements AfterViewInit {
     }
     const c: CanvasRenderingContext2D = this.canvasRef.nativeElement.getContext('2d')!;
 
-    // clears rectangle on each frame 
+    // clears rectangle on each frame
     c.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
     //prints chesspattern
     this.chesspattern(this.map);
@@ -234,7 +259,7 @@ export class GameAreaComponent implements AfterViewInit {
     this.player.draw();
     requestAnimationFrame(() => this.animate());
   }
-  
+
   private chesspattern(map: String[][]): void {
     const c: CanvasRenderingContext2D = this.canvasRef.nativeElement.getContext('2d')!;
     map.forEach((row, i) => {
@@ -327,7 +352,7 @@ class Icon {
     img.src = 'data:image/svg+xml;base64,' + btoa(decodedSvg);
 
     //draws image
-    
+
     if (c) {
       // calculate the center position of a square
       const centerX = this.position.x + Boundary.width / 2;
