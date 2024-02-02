@@ -18,7 +18,6 @@ body {
   grid-template-columns: auto auto auto;
   grid-column-gap: 10px;
   justify-content: space-evenly;
-  padding: 10px;
 }
 
 .resetdiv svg, .playdiv svg {
@@ -59,7 +58,6 @@ canvas {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px;
 }
 
 .textbox {
@@ -67,10 +65,8 @@ canvas {
   text-align: center;
   color: #09103b;
   background-color: #84879d;
-  outline-color: black;
-  outline-style: solid;
-  padding: 15px;
-  outline-width: 5px;
+  padding: 0 5px 15px;
+  outline: black solid 5px;
   margin: 10px;
 }
 
@@ -80,14 +76,14 @@ canvas {
 
 .contentbox {
   display: flex;
-  padding: 10px;
+  padding: 5px;
 }
 
 .left-column {
   width: 40%;
   background-color: #dcdcdc;
   font-family: 'PixelFont', sans-serif;
-  padding: 20px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -106,7 +102,7 @@ canvas {
 .button-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
   width: 100%;
 }
 
