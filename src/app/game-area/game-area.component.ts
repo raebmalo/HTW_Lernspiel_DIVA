@@ -20,7 +20,7 @@ export class GameAreaComponent implements AfterViewInit {
   goal!: Goal;
   dynamicText: string = 'Initial text in the textbox';
   clickedLink: string | null = null;
-  
+  collectedHeartsCount: number = 0;
   
   svgString: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
   <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0 
@@ -470,7 +470,7 @@ class Player {
       if (distanceSquared < this.radius * this.radius) {
           // Kollision erkannt, führe entsprechende Aktionen aus
           icon.collected = true;
-          console.log("col")
+          this.gameArea.collectedHeartsCount++; 
           // Weitere Behandlung, z. B. Punktezählung oder Animation
       }
   }
