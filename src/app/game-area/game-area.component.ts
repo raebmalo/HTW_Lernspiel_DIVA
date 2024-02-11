@@ -89,19 +89,19 @@ export class GameAreaComponent implements AfterViewInit {
       console.log(index)
       const element = this.buttonText[index];
       switch (element) {
-        case 'left':
+        case 'goLeft();':
           console.log("left");
           this.animateMovement(index, -1, 0, steps);
           break;
-        case 'right':
+        case 'goRight();':
           console.log("right");
           this.animateMovement(index, 1, 0, steps);
           break;
-        case 'up':
+        case 'goUp();':
           console.log("up");
           this.animateMovement(index, 0, -1, steps);
           break;
-        case 'down':
+        case 'goDown();':
           console.log("down");
           this.animateMovement(index, 0, 1, steps);
           break;

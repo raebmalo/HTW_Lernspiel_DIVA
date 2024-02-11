@@ -30,11 +30,11 @@
   <div class="left-column">
     <div class="button-container">
       <p>Collected Hearts: {{ collectedHeartsCount }}/{{ HeartsCount }}</p>
-      <button class="button" (click)="updateText('left')">Turn left</button>
-      <button class="button" (click)="updateText('right')">Turn right</button>
-      <button class="button" (click)="updateText('up')">Turn up</button>
-      <button class="button" (click)="updateText('down')">Turn down</button>
-      <button class="button" (click)="updateText('move')">Move</button>
+      <button class="button" (click)="updateText('goLeft();')">goLeft();</button>
+      <button class="button" (click)="updateText('goRight();')">goRight();</button>
+      <button class="button" (click)="updateText('goUp();')">goUp();</button>
+      <button class="button" (click)="updateText('goDown();')">goDown();</button>
+      <button class="button" (click)="updateText('collectItem();')">collectItem();</button>
     </div>
   </div>
   <div class="right-column"  #rightColumn>
