@@ -244,6 +244,7 @@ export class GameAreaComponent implements AfterViewInit {
         // Draw chessboard pattern
       c.fillStyle = (i + j) % 2 === 0 ? 'white' : '#EEEEEE';
       c.fillRect(44 * i, 44 * j, Boundary.width, Boundary.height);
+      
     });
   });
   }
