@@ -21,21 +21,18 @@ export class GameAreaComponent implements AfterViewInit {
   dynamicText: string = 'Initial text in the textbox';
   clickedLink: string | null = null;
   collectedHeartsCount: number = 0;
-  
-  svgString: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-  <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0 
-  2v2h2v2h2V6h2V4h4v2h2v6h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3V6h2V4z"/>
-  </svg>`;;
+  HeartCount: number = 0;
+
   // map two dimensional array
   map: string[][] = [
     ['-','-','-','-','-','-','-','-','-','-'],
     ['-',' ',' ',' ','-',' ','-',' ',' ','-'],
-    ['-','-','-','i','-',' ','-','-',' ','-'],
+    ['-','-','-','i','-','b','-','-',' ','-'],
     ['-',' ',' ',' ','-','i','-','-',' ','-'],
     ['-',' ','-','-','-',' ','-','-',' ','-'],
     ['-',' ',' ',' ',' ',' ','+',' ',' ','-'],
     ['-','-','-','-','-','-','-','-',' ','-'],
-    ['-','-',' ',' ',' ','-',' ',' ',' ','-'],
+    ['-','-',' ',' ',' ','-','b',' ',' ','-'],
     ['-',' ',' ','-',' ',' ',' ','-',' ','-'],
     ['-','-','-','-','-','-','-','-','-','-'],
   ];
@@ -198,6 +195,20 @@ export class GameAreaComponent implements AfterViewInit {
                   x: 44 * j,
                   y: 44 * i,
                 },
+                itemtype: "i",
+              })
+            );
+            this.HeartCount += 1;
+            break;
+          case 'b':
+            // create goal if symbol == "+"
+            this.icons.push(
+              new Icon({
+                position: {
+                  x: 44 * j,
+                  y: 44 * i,
+                },
+                itemtype: "b",
               })
             );
             break;
@@ -227,7 +238,7 @@ export class GameAreaComponent implements AfterViewInit {
     this.player.checkIconCollision()
     this.icons.forEach((icon) => {
       if (!icon.collected) {
-        icon.drawSVGIconOnCanvas(this.svgString, c);
+        icon.drawSVGIconOnCanvas(icon.itemtype, c);
       }
     });
     this.player.update();
@@ -313,19 +324,38 @@ class Icon {
   static width: number = 32;
   static height: number = 32;
   collected: boolean = false; 
+  static heartSVG: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+  <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0 
+  2v2h2v2h2V6h2V4h4v2h2v6h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3V6h2V4z"/>
+  </svg>`;
+  static bugSVG: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+  <path fill="currentColor" d="M8 2h2v4h4V2h2v4h2v3h2v2h-2v2h4v2h-4v2h2v2h-2v3H6v-3H4v-2h2v-2H2v-2h4v-2H4V9h2V6h2zm8 
+  6H8v3h8zm-5 5H8v7h3zm2 7h3v-7h-3zM4 9H2V7h2zm0 10v2H2v-2zm16 0h2v2h-2zm0-10V7h2v2z"/></svg>`
 
   position: { x: number; y: number };
   width: number;
   height: number;
+  itemtype: string;
 
-  constructor({ position }: { position: { x: number; y: number } }) {
+  constructor({ position, itemtype}: { position: { x: number; y: number }, itemtype: string }) {
     this.position = position;
+    this.itemtype = itemtype
     this.width = 32;
     this.height = 32;
   }
 
   // draw svg on canvas
-  drawSVGIconOnCanvas(svgString: string, c: CanvasRenderingContext2D): void {
+  drawSVGIconOnCanvas(icontype: string, c: CanvasRenderingContext2D): void {
+    let svgString: string = "";
+    switch(icontype){
+      case "i":
+        svgString = Icon.heartSVG;
+        break;
+      case "b":   
+      svgString = Icon.bugSVG;
+        break;
+    }
+    
     const img = new Image();
     // decode svg string
     const decodedSvg = decodeURIComponent(svgString);
@@ -432,8 +462,6 @@ class Player {
       // checks if the distance is less than the radius squared (collision occurs)
       if (distanceSquared < this.radius * this.radius) {
         console.log("Collision detected!");
-        //console.log("Player position:", this.position);
-        //console.log("Boundary position:", boundary.position);
         this.collision = true;
         alert("Kollision Spiel beendet");
         this.gameArea.isPlayButtonDisabled = true;
@@ -477,20 +505,12 @@ class Player {
   }
 
   checkGoalCollision(): boolean {
-    if (this.goalReached || this.gameArea.collectedHeartsCount !== this.gameArea.icons.length) {
-      return false;
-    }
-    //console.log("x: "+this.gameArea.goal.position.x + 22);
-    //console.log("y: "+this.gameArea.goal.position.y + 22);
-
     // calculate x and y distance to the finish-square
     const distanceX = this.position.x - (this.gameArea.goal.position.x + 22);
     const distanceY = this.position.y - (this.gameArea.goal.position.y + 22);
-    //console.log("x distance: "+distanceX);
-    //console.log("y distance: "+distanceY);
 
     // if finish reached, create alert
-    if (distanceX == 0 && distanceY == 0) {
+    if (distanceX == 0 && distanceY == 0 && this.gameArea.collectedHeartsCount == this.gameArea.HeartCount) {
       console.log('Goal reached!');
       this.showToast()
       alert("Ziel erreicht")
