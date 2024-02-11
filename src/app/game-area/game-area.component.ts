@@ -21,6 +21,7 @@ export class GameAreaComponent implements AfterViewInit {
   dynamicText: string = 'Initial text in the textbox';
   clickedLink: string | null = null;
   
+  
   svgString: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
   <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0 
   2v2h2v2h2V6h2V4h4v2h2v6h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3V6h2V4z"/>
@@ -223,8 +224,11 @@ export class GameAreaComponent implements AfterViewInit {
     });
     // print goal and update player
     this.goal.draw(c);
+    this.player.checkIconCollision()
     this.icons.forEach((icon) => {
-      icon.drawSVGIconOnCanvas(this.svgString,c);
+      if (!icon.collected) {
+        icon.drawSVGIconOnCanvas(this.svgString, c);
+      }
     });
     this.player.update();
     this.player.checkBoundaryCollision(this.boundaries);
@@ -244,7 +248,7 @@ export class GameAreaComponent implements AfterViewInit {
         // Draw chessboard pattern
       c.fillStyle = (i + j) % 2 === 0 ? 'white' : '#EEEEEE';
       c.fillRect(44 * i, 44 * j, Boundary.width, Boundary.height);
-      
+
     });
   });
   }
@@ -308,6 +312,7 @@ class Icon {
   // width and height of goal
   static width: number = 32;
   static height: number = 32;
+  collected: boolean = false; 
 
   position: { x: number; y: number };
   width: number;
@@ -444,6 +449,31 @@ class Player {
     this.toastr.success('Herzlichen Glückwunsch!', 'Spiel beendet', {
       positionClass: 'toast-center', // Fügen Sie diese Zeile hinzu
     });
+  }
+  
+  checkIconCollision(): void {
+    if (this.collision) {
+      return;
+  }
+    // Iteriere über alle Icons im Spielbereich
+    for (const icon of this.gameArea.icons) {
+      if (icon.collected) {
+          continue; // Überspringe dieses Icon, wenn es bereits gesammelt wurde
+      }
+      const closestX = Math.max(icon.position.x, Math.min(this.position.x, icon.position.x + icon.width));
+      const closestY = Math.max(icon.position.y, Math.min(this.position.y, icon.position.y + icon.height));
+      // calculate the distance between the closest point on the rectangle and the center of the circle
+      const distanceX = this.position.x - closestX;
+      const distanceY = this.position.y - closestY;
+      const distanceSquared = distanceX * distanceX + distanceY * distanceY;
+      // Überprüfe, ob eine Kollision vorliegt
+      if (distanceSquared < this.radius * this.radius) {
+          // Kollision erkannt, führe entsprechende Aktionen aus
+          icon.collected = true;
+          console.log("col")
+          // Weitere Behandlung, z. B. Punktezählung oder Animation
+      }
+  }
   }
 
   checkGoalCollision(): boolean {
