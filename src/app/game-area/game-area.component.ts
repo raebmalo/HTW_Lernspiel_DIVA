@@ -19,7 +19,7 @@ export class GameAreaComponent implements AfterViewInit {
   goal!: Goal;
   dynamicText: string = 'Initial text in the textbox';
   clickedLink: string | null = null;
-  static pixelCount: number = 44;
+  static pixelCount: number = 66;
   svgString: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
   <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0 
   2v2h2v2h2V6h2V4h4v2h2v6h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3V6h2V4z"/>
@@ -75,7 +75,7 @@ export class GameAreaComponent implements AfterViewInit {
 
   startGame() {
     console.log("start game");
-    this.animateAction(0, GameAreaComponent.pixelCount);
+    this.animateAction(0, GameAreaComponent.pixelCount/2);
     // TODO - Funktion Animation beendet --> Button disabled:
     this.isPlayButtonDisabled = true;
   }
@@ -88,19 +88,21 @@ export class GameAreaComponent implements AfterViewInit {
       switch (element) {
         case 'left':
           console.log("left");
-          this.animateMovement(index, -1, 0, steps);
+          // GameAreaComponent.pixelCount/10*(-1)
+          this.animateMovement(index, -2, 0, steps);
           break;
         case 'right':
           console.log("right");
-          this.animateMovement(index, 1, 0, steps);
+          // GameAreaComponent.pixelCount/10
+          this.animateMovement(index, 2, 0, steps);
           break;
         case 'up':
           console.log("up");
-          this.animateMovement(index, 0, -1, steps);
+          this.animateMovement(index, 0, -2, steps);
           break;
         case 'down':
           console.log("down");
-          this.animateMovement(index, 0, 1, steps);
+          this.animateMovement(index, 0, 2, steps);
           break;
       }
     } else {
@@ -429,7 +431,7 @@ class Player {
         //console.log("Player position:", this.position);
         //console.log("Boundary position:", boundary.position);
         this.collision = true;
-        alert("Kollision Spiel beendet");
+        alert("Kollision mit der Wand! Spiel beendet.");
         this.gameArea.isPlayButtonDisabled = true;
         this.resetVel();
         this.draw();
