@@ -1,5 +1,4 @@
 import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef } from '@angular/core';
-import { timeout } from 'rxjs'; // also not used?
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -20,11 +19,12 @@ export class GameAreaComponent implements AfterViewInit {
   goal!: Goal;
   dynamicText: string = 'Initial text in the textbox';
   clickedLink: string | null = null;
-  
+  static pixelCount: number = 44;
   svgString: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
   <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0 
   2v2h2v2h2V6h2V4h4v2h2v6h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3V6h2V4z"/>
   </svg>`;;
+
   // map two dimensional array
   map: string[][] = [
     ['-','-','-','-','-','-','-','-','-','-'],
@@ -61,7 +61,7 @@ export class GameAreaComponent implements AfterViewInit {
 
   // resets the player position and the collision-detection
   resetGame() {
-      this.player.position = {  x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 };
+      this.player.position = {  x: GameAreaComponent.pixelCount + GameAreaComponent.pixelCount / 2, y: GameAreaComponent.pixelCount + GameAreaComponent.pixelCount / 2 };
       this.player.resetCollision();
       this.player.goalReached = false; // Setzen Sie die goalReached-Flag zurück
       this.updateRightColumn();
@@ -75,7 +75,7 @@ export class GameAreaComponent implements AfterViewInit {
 
   startGame() {
     console.log("start game");
-    this.animateAction(0, 44);
+    this.animateAction(0, GameAreaComponent.pixelCount);
     // TODO - Funktion Animation beendet --> Button disabled:
     this.isPlayButtonDisabled = true;
   }
@@ -131,7 +131,7 @@ export class GameAreaComponent implements AfterViewInit {
   constructor(private toastr: ToastrService, private renderer: Renderer2) {
     this.player = new Player(
       {
-        position: { x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 },
+        position: { x: GameAreaComponent.pixelCount + GameAreaComponent.pixelCount / 2, y: GameAreaComponent.pixelCount + GameAreaComponent.pixelCount / 2 },
         velocity: { x: 0, y: 0 },
       },
       this,
@@ -161,10 +161,10 @@ export class GameAreaComponent implements AfterViewInit {
     const c: CanvasRenderingContext2D = newCanvas.getContext('2d')!;
 
     // calculates width of the canvas by multiplying the pixel width and height by the number of columns and rows
-    newCanvas.width = this.map[0].length * Boundary.width;
-    newCanvas.height = this.map.length * Boundary.height;
+    newCanvas.width = this.map[0].length * GameAreaComponent.pixelCount;
+    newCanvas.height = this.map.length * GameAreaComponent.pixelCount;
 
-    // paints the canvas with each boundary being 44 pixels wide/high
+    // paints the canvas with each boundary being pixelCount pixels wide/high
     this.map.forEach((row, i) => {
       //for each row
       row.forEach((symbol, j) => {
@@ -174,9 +174,11 @@ export class GameAreaComponent implements AfterViewInit {
             this.boundaries.push(
               new Boundary({
                 position: {
-                  x: 44 * j,
-                  y: 44 * i,
+                  x: GameAreaComponent.pixelCount * j,
+                  y: GameAreaComponent.pixelCount * i,
                 },
+                width: GameAreaComponent.pixelCount,
+                height: GameAreaComponent.pixelCount,
               })
             );
             break;
@@ -184,9 +186,11 @@ export class GameAreaComponent implements AfterViewInit {
             // create goal if symbol == "+"
             this.goal = new Goal({
               position: {
-                x: 44 * j, // Berücksichtigen Sie die Breite der Boundary
-                y: 44 * i, // Berücksichtigen Sie die Höhe der Boundary
+                x: GameAreaComponent.pixelCount * j, // Berücksichtigen Sie die Breite der Boundary
+                y: GameAreaComponent.pixelCount * i, // Berücksichtigen Sie die Höhe der Boundary
               },
+              width: GameAreaComponent.pixelCount,
+              height: GameAreaComponent.pixelCount
             });
             break;
           case 'i':
@@ -194,8 +198,8 @@ export class GameAreaComponent implements AfterViewInit {
             this.icons.push(
               new Icon({
                 position: {
-                  x: 44 * j,
-                  y: 44 * i,
+                  x: GameAreaComponent.pixelCount * j,
+                  y: GameAreaComponent.pixelCount * i,
                 },
               })
             );
@@ -243,7 +247,7 @@ export class GameAreaComponent implements AfterViewInit {
         // for each symbol
         // Draw chessboard pattern
       c.fillStyle = (i + j) % 2 === 0 ? 'white' : '#EEEEEE';
-      c.fillRect(44 * i, 44 * j, Boundary.width, Boundary.height);
+      c.fillRect(GameAreaComponent.pixelCount * i, GameAreaComponent.pixelCount * j, GameAreaComponent.pixelCount, GameAreaComponent.pixelCount);
     });
   });
   }
@@ -256,22 +260,20 @@ export class GameAreaComponent implements AfterViewInit {
     this.animationActive = true; // starts animation
     this.animate();
   }
+  
 }
 
 class Boundary {
-
   // width and height of each boundary
-  static width: number = 44;
-  static height: number = 44;
 
   position: { x: number; y: number };
   width: number;
   height: number;
 
-  constructor({ position }: { position: { x: number; y: number } }) {
+  constructor({ position, width, height }: { position: { x: number; y: number }, width: number, height: number }) {
     this.position = position;
-    this.width = 44;
-    this.height = 44;
+    this.width = width;
+    this.height = height;
   }
 
   // make the goal a dark blue box
@@ -283,17 +285,15 @@ class Boundary {
 
 class Goal {
   // width and height of goal
-  static width: number = 44;
-  static height: number = 44;
 
   position: { x: number; y: number };
   width: number;
   height: number;
 
-  constructor({ position }: { position: { x: number; y: number } }) {
+  constructor({ position, width, height }: { position: { x: number; y: number }, width: number, height: number }) {
     this.position = position;
-    this.width = 44;
-    this.height = 44;
+    this.width = width;
+    this.height = height;
   }
 
   // make the goal a green box
@@ -330,8 +330,8 @@ class Icon {
     
     if (c) {
       // calculate the center position of a square
-      const centerX = this.position.x + Boundary.width / 2;
-      const centerY = this.position.y + Boundary.height / 2;
+      const centerX = this.position.x + GameAreaComponent.pixelCount / 2;
+      const centerY = this.position.y + GameAreaComponent.pixelCount / 2;
       // Adjust for the size of the SVG (32x32)
       const imageX = centerX - Icon.width/2; // 32/2 = 16
       const imageY = centerY - Icon.height/2; // 32/2 = 16
@@ -405,7 +405,7 @@ class Player {
   // this method is not used, need to be reviewed if its needed?
   resetToStartPosition(): void {
     // calculates starting position and resets player to this position
-    this.position = { x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 };
+    this.position = { x: GameAreaComponent.pixelCount + GameAreaComponent.pixelCount / 2, y: GameAreaComponent.pixelCount + GameAreaComponent.pixelCount / 2 };
   }
 
   checkBoundaryCollision(boundaries: Boundary[]): void {
@@ -415,8 +415,8 @@ class Player {
 
     for (const boundary of boundaries) {
       // calculates the distance between the center of the circle (player) and the closest point on the rectangle (boundary)
-      const closestX = Math.max(boundary.position.x, Math.min(this.position.x, boundary.position.x + boundary.width));
-      const closestY = Math.max(boundary.position.y, Math.min(this.position.y, boundary.position.y + boundary.height));
+      const closestX = Math.max(boundary.position.x, Math.min(this.position.x, boundary.position.x + GameAreaComponent.pixelCount));
+      const closestY = Math.max(boundary.position.y, Math.min(this.position.y, boundary.position.y + GameAreaComponent.pixelCount));
 
       // calculate the distance between the closest point on the rectangle and the center of the circle
       const distanceX = this.position.x - closestX;
