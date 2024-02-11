@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { timeout } from 'rxjs'; // also not used?
 import { ToastrService } from 'ngx-toastr';
 
@@ -21,7 +21,7 @@ export class GameAreaComponent implements AfterViewInit {
   dynamicText: string = 'Initial text in the textbox';
   clickedLink: string | null = null;
   collectedHeartsCount: number = 0;
-  HeartCount: number = 0;
+  HeartsCount: number = 0;
 
   // map two dimensional array
   map: string[][] = [
@@ -63,6 +63,11 @@ export class GameAreaComponent implements AfterViewInit {
       this.player.resetCollision();
       this.player.goalReached = false; // Setzen Sie die goalReached-Flag zurück
       this.updateRightColumn();
+      this.collectedHeartsCount = 0;this.icons.forEach((icon) => {
+      this.icons.forEach(icon => {
+        icon.collected = false;
+      });
+      });
   }
 
   // deletes the code
@@ -101,6 +106,8 @@ export class GameAreaComponent implements AfterViewInit {
           this.animateMovement(index, 0, 1, steps);
           break;
       }
+      console.log("total"+this.HeartsCount);
+      console.log("collected"+this.collectedHeartsCount);
     } else {
       // All actions are done, reset player velocity and restart animation
       console.log("else");
@@ -198,7 +205,7 @@ export class GameAreaComponent implements AfterViewInit {
                 itemtype: "i",
               })
             );
-            this.HeartCount += 1;
+            this.HeartsCount += 1;
             break;
           case 'b':
             // create goal if symbol == "+"
@@ -474,7 +481,7 @@ class Player {
   }
 
   showToast(): void {
-    this.toastr.success('Herzlichen Glückwunsch!', 'Spiel beendet', {
+    this.toastr.success('Herzlichen Glückwunsch!', 'Spiel beendet.', {
       positionClass: 'toast-center', // Fügen Sie diese Zeile hinzu
     });
   }
@@ -510,13 +517,12 @@ class Player {
     const distanceY = this.position.y - (this.gameArea.goal.position.y + 22);
 
     // if finish reached, create alert
-    if (distanceX == 0 && distanceY == 0 && this.gameArea.collectedHeartsCount == this.gameArea.HeartCount) {
+    if (distanceX == 0 && distanceY == 0 && this.gameArea.collectedHeartsCount == this.gameArea.HeartsCount && this.goalReached !== true) {
       console.log('Goal reached!');
-      this.showToast()
-      alert("Ziel erreicht")
+      alert("Ziel erreicht");
+      this.showToast();
       this.gameArea.isPlayButtonDisabled = true;
       this.goalReached = true;
-      this.stopAnimation();
       return true;
     }
     return false;
