@@ -1,5 +1,4 @@
 import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef } from '@angular/core';
-import { timeout } from 'rxjs'; // also not used?
 import { ToastrService } from 'ngx-toastr';
 import {GameService} from "../services/game.service";
 import {Game} from "../models/game.model";
@@ -37,9 +36,9 @@ export class GameAreaComponent implements AfterViewInit {
   animationActive: boolean = true;
   isPlayButtonDisabled: boolean = false;
   goal!: Goal;
-  dynamicText: string = 'Initial text in the textbox';
   clickedLink: string | null = null;
   game!: Game;
+  buttonTexts: string[] = [];
 
   svgString: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
   <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0
@@ -66,7 +65,6 @@ export class GameAreaComponent implements AfterViewInit {
         this.gameService.getGameByLevelFromDatabase(levelParam).subscribe(
           (game: Game) => {
             this.game = game;
-            console.log('Loaded game:', game);
           },
           error => {
             console.error('Error loading game:', error);
@@ -86,13 +84,18 @@ export class GameAreaComponent implements AfterViewInit {
     this.updateRightColumn();
   }
 
-  // updates the html element of the code-column
   updateRightColumn() {
-    let rightColumn = document.querySelector('.text-column');
-    // adds line breaks so that the code will appear vertically
-    let rightColumnText: string = this.buttonText.join('\n');
+    const rightColumn = document.querySelector('.right-column');
     if (rightColumn instanceof HTMLElement) {
-      rightColumn.textContent = rightColumnText;
+      const textColumn = rightColumn.querySelector('.text-column');
+      if (textColumn instanceof HTMLElement) {
+        textColumn.innerHTML = '';
+        this.buttonText.forEach(text => {
+          const p = document.createElement('p');
+          p.textContent = text;
+          textColumn.appendChild(p);
+        });
+      }
     }
   }
 
@@ -119,7 +122,7 @@ export class GameAreaComponent implements AfterViewInit {
 
   animateAction(index: number, steps: number) {
     // finds the direction in which the player-figure shold move
-    if ((index < this.buttonText.length) && (this.animationActive == true)) {
+    if ((index < this.buttonText.length) && this.animationActive) {
       console.log(index)
       const element = this.buttonText[index];
       switch (element) {
@@ -400,19 +403,29 @@ class Player {
   }
 
   draw(): void {
-    // draws the canvas by selecting the canvas div in the html code
-    const c: CanvasRenderingContext2D = document.querySelector('canvas')!.getContext('2d')!;
-    c.beginPath();
-    // paints a circle that turns red when colliding and is yellow by default
-    c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
-    if(this.collision === true) {
-      c.fillStyle = 'red';
+    if (!this.gameArea.canvasRef) {
+      console.error('Canvas reference not found');
+      return;
     }
-    else {
-    c.fillStyle = '#fccb00';
+    const canvas: HTMLCanvasElement = this.gameArea.canvasRef.nativeElement;
+    if (!canvas) {
+      console.error('Canvas element not found');
+      return;
     }
-    c.fill();
-    c.closePath();
+    const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
+    if (!context) {
+      console.error('Failed to get context');
+      return;
+    }
+    context.beginPath();
+    context.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+    if (this.collision) {
+      context.fillStyle = 'red';
+    } else {
+      context.fillStyle = '#fccb00';
+    }
+    context.fill();
+    context.closePath();
   }
 
   update(): void {

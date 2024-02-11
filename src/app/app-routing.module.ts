@@ -13,6 +13,11 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path: 'play-the-game',
+    redirectTo: '/play-the-game/level-1',
+    pathMatch: 'full'
+  },
+  {
     path: 'play-the-game/:level',
     component: GameAreaComponent
   },

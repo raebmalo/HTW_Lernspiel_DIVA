@@ -38,7 +38,6 @@ export class GameService {
 
   private static formatLevel(level: string): string {
     const match = level.match(/level-(\d+)/i);
-    console.log(match)
     if (match) {
       const levelNumber = parseInt(match[1]);
       return 'Level ' + levelNumber;
