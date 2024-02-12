@@ -44,8 +44,8 @@ body {
 }
 
 .playdiv.disabled {
-  background-color: grey; /* Set the background color to grey for the disabled state */
-  cursor: not-allowed;   /* Change the cursor to indicate it's not clickable */
+  background-color: grey;
+  cursor: not-allowed;
 }
 
 canvas {
@@ -154,6 +154,7 @@ ul {
 
 li {
   margin: 0 5px;
+  flex: 1;
 }
 
 li a {
@@ -201,9 +202,23 @@ li a:hover {
 }
 
 @media (max-width: 767px) {
-  .level-list li a {
-    display: inline-block;
-    padding: 5px;
+  li a {
+    display: block;
+    color: #cdcfd7;
+    font-weight: bold;
+    font-family: 'PixelFont', sans-serif;
+    text-align: center;
+    padding: 3% 5%;
+    text-decoration: none;
+  }
+
+  li a.clicked {
+    background-color: #9c9fb0;
+    color: #ffffff;
+  }
+
+  li a:hover {
+    background-color: #222;
   }
 }
 

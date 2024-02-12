@@ -4,6 +4,7 @@ import express from "express";
 import cors from "cors";
 import bodyParser from 'body-parser';
 import gameRouter from './router/game.routes';
+import mapRouter from './router/map.routes';
 import { dbConnect } from "./configs/database.config";
 dbConnect();
 
@@ -15,6 +16,7 @@ app.use(cors({
 }));
 
 app.use("/api/game", gameRouter);
+app.use('/api/map', mapRouter);
 
 const port = 3000;
 app.listen(port, () => {

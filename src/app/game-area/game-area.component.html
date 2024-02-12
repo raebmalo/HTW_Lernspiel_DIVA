@@ -8,8 +8,8 @@
 <body>
 <div class="container">
   <div class="textbox">
-    <h2>{{game?.level}}</h2>
-    <p>{{game?.description}}</p>
+    <h2>{{game && game.level}}</h2>
+    <p>{{game && game.description}}</p>
   </div>
 </div>
 <div class="parentdiv">
@@ -50,9 +50,9 @@
   </div>
 </div>
 <ul class="level-list">
-  <li><a [routerLink]="['/play-the-game/level-1']" (click)="onLinkClick('link1')" [class.clicked]="clickedLink === 'link1'">1</a></li>
-  <li><a [routerLink]="['/play-the-game/level-2']" (click)="onLinkClick('link2')" [class.clicked]="clickedLink === 'link2'">2</a></li>
-  <li><a [routerLink]="['/play-the-game/level-3']" (click)="onLinkClick('link3')" [class.clicked]="clickedLink === 'link3'">3</a></li>
+  <li><a [routerLink]="['/play-the-game/level-1']" (click)="reloadPage('level-1')" [class.clicked]="clickedLink === 'level-1'">1</a></li>
+  <li><a [routerLink]="['/play-the-game/level-2']" (click)="reloadPage('level-2')" [class.clicked]="clickedLink === 'level-2'">2</a></li>
+  <li><a [routerLink]="['/play-the-game/level-3']" (click)="reloadPage('level-3')" [class.clicked]="clickedLink === 'level-3'">3</a></li>
 </ul>
 </body>
 </html>
