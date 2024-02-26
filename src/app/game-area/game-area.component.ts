@@ -28,7 +28,7 @@ export class GameAreaComponent implements AfterViewInit {
     ['-','-','-','-','-','-','-','-','-','-'],
     ['-',' ',' ',' ','-',' ','-',' ',' ','-'],
     ['-','-','-','i','-','b','-','-',' ','-'],
-    ['-',' ',' ',' ','-','i','-','-',' ','-'],
+    ['-',' ',' ','b','-','i','-','-',' ','-'],
     ['-',' ','-','-','-',' ','-','-',' ','-'],
     ['-',' ',' ',' ',' ',' ','+',' ',' ','-'],
     ['-','-','-','-','-','-','-','-',' ','-'],
@@ -505,7 +505,9 @@ class Player {
       if (distanceSquared < this.radius * this.radius) {
           // Kollision erkannt, führe entsprechende Aktionen aus
           icon.collected = true;
-          this.gameArea.collectedHeartsCount++; 
+          if(icon.itemtype === "i"){
+            this.gameArea.collectedHeartsCount++;   
+          }
           // Weitere Behandlung, z. B. Punktezählung oder Animation
       }
   }
