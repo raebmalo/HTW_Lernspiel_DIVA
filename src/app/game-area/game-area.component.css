@@ -25,7 +25,10 @@ body {
   width: 100%;
   height: auto;
 }
-
+svg.disabled {
+  opacity: 0.5; /* Machen Sie das Symbol blasser, um es als deaktiviert darzustellen */
+  pointer-events: none; /* Verhindern Sie, dass auf das Element geklickt wird */
+}
 .resetdiv, .playdiv {
   display: flex;
   flex-direction: column;
