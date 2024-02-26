@@ -22,15 +22,16 @@ export class GameAreaComponent implements AfterViewInit {
   clickedLink: string | null = null;
   collectedHeartsCount: number = 0;
   HeartsCount: number = 0;
+  gameArea!: GameAreaComponent;
 
   // map two dimensional array
   map: string[][] = [
     ['-','-','-','-','-','-','-','-','-','-'],
     ['-',' ',' ',' ','-',' ','-',' ',' ','-'],
     ['-','-','-','i','-','b','-','-',' ','-'],
-    ['-',' ',' ','b','-','i','-','-',' ','-'],
+    ['-',' ','+','b','-',' ','-','-',' ','-'],
     ['-',' ','-','-','-',' ','-','-',' ','-'],
-    ['-',' ',' ',' ',' ',' ','+',' ',' ','-'],
+    ['-',' ',' ',' ',' ',' ',' ',' ',' ','-'],
     ['-','-','-','-','-','-','-','-',' ','-'],
     ['-','-',' ',' ',' ','-','b',' ',' ','-'],
     ['-',' ',' ','-',' ',' ',' ','-',' ','-'],
@@ -104,6 +105,11 @@ export class GameAreaComponent implements AfterViewInit {
         case 'goDown();':
           console.log("down");
           this.animateMovement(index, 0, 1, steps);
+          break;
+        case 'collectItem();': // Neuer Fall für das Einsammeln von Items
+          console.log("collecting item");
+          this.player.collectItem(); // Rufe die neue Methode auf, wenn collectItem ausgeführt wird
+          this.animateAction(index + 1, steps);
           break;
       }
       console.log("total"+this.HeartsCount);
@@ -485,33 +491,46 @@ class Player {
       positionClass: 'toast-center', // Fügen Sie diese Zeile hinzu
     });
   }
+  collectItemCommandExecuted: boolean = false;
+
+  // Neue Methode, um die Ausführung des collectItem Befehls zu verarbeiten
+  collectItem(): void {
+    this.collectItemCommandExecuted = true;
+    this.checkIconCollision();
+    // Setze die Flag nach der Überprüfung zurück, um sicherzustellen, dass Items nur bei expliziter Ausführung gesammelt werden
+    this.collectItemCommandExecuted = false;
+  }
+
   
   checkIconCollision(): void {
-    if (this.collision) {
+    if (this.collision || !this.collectItemCommandExecuted) {
       return;
-  }
-    // Iteriere über alle Icons im Spielbereich
+    }
     for (const icon of this.gameArea.icons) {
       if (icon.collected) {
-          continue; // Überspringe dieses Icon, wenn es bereits gesammelt wurde
+        continue;
       }
       const closestX = Math.max(icon.position.x, Math.min(this.position.x, icon.position.x + icon.width));
       const closestY = Math.max(icon.position.y, Math.min(this.position.y, icon.position.y + icon.height));
-      // calculate the distance between the closest point on the rectangle and the center of the circle
       const distanceX = this.position.x - closestX;
       const distanceY = this.position.y - closestY;
       const distanceSquared = distanceX * distanceX + distanceY * distanceY;
-      // Überprüfe, ob eine Kollision vorliegt
       if (distanceSquared < this.radius * this.radius) {
-          // Kollision erkannt, führe entsprechende Aktionen aus
-          icon.collected = true;
-          if(icon.itemtype === "i"){
-            this.gameArea.collectedHeartsCount++;   
-          }
-          // Weitere Behandlung, z. B. Punktezählung oder Animation
+        icon.collected = true;
+        if(icon.itemtype === "b"){
+          alert("Es wurde ein Bug eingesammelt, Spiel beendet");
+          this.gameArea.isPlayButtonDisabled = true; // Deaktiviert den Start-Button, um weitere Aktionen zu verhindern
+          this.stopAnimation(); // Stoppt die Animation und damit das Spiel
+          this.gameArea.resetGame()
+          return; // Verlässt die Schleife und Funktion sofort, um keine weiteren Aktionen zuzulassen
+        }
+        if(icon.itemtype === "i"){
+          this.gameArea.collectedHeartsCount++;
+        }
       }
+    }
   }
-  }
+  
 
   checkGoalCollision(): boolean {
     // calculate x and y distance to the finish-square
