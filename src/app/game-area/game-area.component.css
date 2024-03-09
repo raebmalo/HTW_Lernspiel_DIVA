@@ -18,14 +18,16 @@ body {
   grid-template-columns: auto auto auto;
   grid-column-gap: 10px;
   justify-content: space-evenly;
-  padding: 10px;
 }
 
 .resetdiv svg, .playdiv svg {
   width: 100%;
   height: auto;
 }
-
+svg.disabled {
+  opacity: 0.5; /* Machen Sie das Symbol blasser, um es als deaktiviert darzustellen */
+  pointer-events: none; /* Verhindern Sie, dass auf das Element geklickt wird */
+}
 .resetdiv, .playdiv {
   display: flex;
   flex-direction: column;
@@ -45,8 +47,8 @@ body {
 }
 
 .playdiv.disabled {
-  background-color: grey; /* Set the background color to grey for the disabled state */
-  cursor: not-allowed;   /* Change the cursor to indicate it's not clickable */
+  background-color: grey;
+  cursor: not-allowed;
 }
 
 canvas {
@@ -58,8 +60,6 @@ canvas {
 .container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 10px;
 }
 
 .textbox {
@@ -67,10 +67,8 @@ canvas {
   text-align: center;
   color: #09103b;
   background-color: #84879d;
-  outline-color: black;
-  outline-style: solid;
-  padding: 15px;
-  outline-width: 5px;
+  padding: 0 5px 15px;
+  outline: black solid 5px;
   margin: 10px;
 }
 
@@ -78,16 +76,22 @@ canvas {
   color: #09103b;
 }
 
+.text-column {
+  display: block;
+  margin-bottom: 5%;
+  white-space: pre-line;
+}
+
 .contentbox {
   display: flex;
-  padding: 10px;
+  padding: 5px;
 }
 
 .left-column {
   width: 40%;
   background-color: #dcdcdc;
   font-family: 'PixelFont', sans-serif;
-  padding: 20px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -100,13 +104,14 @@ canvas {
   background-color: #dcdcdc;
   font-family: 'PixelFont', sans-serif;
   padding: 5px 20px 20px 20px;
+  line-height: 1.5; 
   overflow-y: auto;
 }
 
 .button-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
   width: 100%;
 }
 
@@ -143,7 +148,7 @@ ul {
   margin: 0;
   padding: 10px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   background-color: #020411;
 }
 
@@ -153,6 +158,7 @@ ul {
 
 li {
   margin: 0 5px;
+  flex: 1;
 }
 
 li a {
@@ -163,7 +169,6 @@ li a {
   text-align: center;
   padding: 3% 5%;
   text-decoration: none;
-  font-size: 12px;
 }
 
 li a.clicked {
@@ -201,10 +206,23 @@ li a:hover {
 }
 
 @media (max-width: 767px) {
-  .level-list li a {
-    display: inline-block;
-    padding: 5px;
-    font-size: 10px;
+  li a {
+    display: block;
+    color: #cdcfd7;
+    font-weight: bold;
+    font-family: 'PixelFont', sans-serif;
+    text-align: center;
+    padding: 3% 5%;
+    text-decoration: none;
+  }
+
+  li a.clicked {
+    background-color: #9c9fb0;
+    color: #ffffff;
+  }
+
+  li a:hover {
+    background-color: #222;
   }
 }
 

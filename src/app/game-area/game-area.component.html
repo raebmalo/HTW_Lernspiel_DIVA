@@ -3,8 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Area</title>
 </head>
 <body>
+<div class="container">
+  <div class="textbox">
+    <h2>{{game && game.level}}</h2>
+    <p>{{game && game.description}}</p>
+  </div>
+</div>
 <div class="parentdiv">
   <div class="resetdiv" >
     <svg (click)="resetGame()" xmlns="http://www.w3.org/2000/svg" width="100px" height="100px" viewBox="0 0 24 24">
@@ -20,25 +27,22 @@
     </svg>
   </div>
 </div>
-<div class="container">
-  <div class="textbox">
-    <h2>Level 1</h2>
-    <p>Navigiere den Spieler durch die Hindernisse bis hin zum Ziel!</p>
-  </div>
-</div>
 <div class="contentbox">
   <div class="left-column">
     <div class="button-container">
-      <button class="button" (click)="updateText('left')">Turn left</button>
-      <button class="button" (click)="updateText('right')">Turn right</button>
-      <button class="button" (click)="updateText('up')">Turn up</button>
-      <button class="button" (click)="updateText('down')">Turn down</button>
-      <button class="button" (click)="updateText('move')">Move</button>
+      <p>Collected Hearts: {{ collectedHeartsCount }}/{{ HeartsCount }}</p>
+      <button class="button" (click)="updateText('goLeft();')">goLeft();</button>
+      <button class="button" (click)="updateText('goRight();')">goRight();</button>
+      <button class="button" (click)="updateText('goUp();')">goUp();</button>
+      <button class="button" (click)="updateText('goDown();')">goDown();</button>
+      <button class="button" (click)="updateText('collectItem();')">collectItem();</button>
     </div>
   </div>
-  <div class="right-column"  #rightColumn>
+  <div class="right-column" #rightColumn>
     <h3>Code:<br></h3>
-    <p class="text-column" style="width: 500px;white-space: pre-line">{{ buttonText }}</p>
+    <div class="text-column">
+      <p class="para" *ngFor="let buttonText of buttonTexts">{{ buttonText }}</p>
+    </div>
     <div class="trashButton" (click)="deleteText()">
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
         <path fill="currentColor" d="M16 2v4h6v2h-2v14H4V8H2V6h6V2zm-2 2h-4v2h4zm0 4H6v12h12V8zm-5 2h2v8H9zm6 0h-2v8h2z"/>
@@ -47,16 +51,11 @@
   </div>
 </div>
 <ul class="level-list">
-  <li><a [routerLink]="['/play-the-game/level-1']" (click)="onLinkClick('link1')" [class.clicked]="clickedLink === 'link1'">1</a></li>
-  <li><a [routerLink]="['/play-the-game/level-2']" (click)="onLinkClick('link2')" [class.clicked]="clickedLink === 'link2'">2</a></li>
-  <li><a [routerLink]="['/play-the-game/level-3']" (click)="onLinkClick('link3')" [class.clicked]="clickedLink === 'link3'">3</a></li>
-  <li><a [routerLink]="['/play-the-game/level-4']" (click)="onLinkClick('link4')" [class.clicked]="clickedLink === 'link4'">4</a></li>
-  <li><a [routerLink]="['/play-the-game/level-5']" (click)="onLinkClick('link5')" [class.clicked]="clickedLink === 'link5'">5</a></li>
-  <li><a [routerLink]="['/play-the-game/level-6']" (click)="onLinkClick('link6')" [class.clicked]="clickedLink === 'link6'">6</a></li>
-  <li><a [routerLink]="['/play-the-game/level-7']" (click)="onLinkClick('link7')" [class.clicked]="clickedLink === 'link7'">7</a></li>
-  <li><a [routerLink]="['/play-the-game/level-8']" (click)="onLinkClick('link8')" [class.clicked]="clickedLink === 'link8'">8</a></li>
-  <li><a [routerLink]="['/play-the-game/level-9']" (click)="onLinkClick('link9')" [class.clicked]="clickedLink === 'link9'">9</a></li>
-  <li><a [routerLink]="['/play-the-game/level-10']" (click)="onLinkClick('link10')" [class.clicked]="clickedLink === 'link10'">10</a></li>
+  <li><a [routerLink]="['/play-the-game/level-1']" (click)="reloadPage('level-1')" [class.clicked]="clickedLink === 'level-1'">1</a></li>
+  <li><a [routerLink]="['/play-the-game/level-2']" (click)="reloadPage('level-2')" [class.clicked]="clickedLink === 'level-2'">2</a></li>
+  <li><a [routerLink]="['/play-the-game/level-3']" (click)="reloadPage('level-3')" [class.clicked]="clickedLink === 'level-3'">3</a></li>
+  <li><a [routerLink]="['/play-the-game/level-4']" (click)="reloadPage('level-4')" [class.clicked]="clickedLink === 'level-4'">4</a></li>
+  <li><a [routerLink]="['/play-the-game/level-5']" (click)="reloadPage('level-5')" [class.clicked]="clickedLink === 'level-5'">5</a></li>
 </ul>
 </body>
 </html>

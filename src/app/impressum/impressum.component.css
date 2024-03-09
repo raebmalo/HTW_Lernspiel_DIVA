@@ -2,32 +2,27 @@
 
 body {
   font-family: 'PixelFont', sans-serif;
-  margin: 0;
-  padding: 0;
   background-color: #84879d;
-}
-
-.textbox {
-  width: 90%;
-  padding: 5%;
-  color: #09103b;
-}
-
-.textbox h2 {
-  color: #09103b;
-}
-
-.impressum {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 70vh;
 }
 
 header {
   color: #09103b;
   text-align: center;
-  padding: 20px;
 }
 
+.textbox {
+  color: #09103b;
+  padding-left: 5%;
+  padding-right: 5%;
+  line-height: 1.5;
+}
 
+h2 {
+  line-height: 1.5;
+}
+
+h3 {
+  text-align: center;
+  line-height: 1.5;
+  margin-bottom: 5%;
+}

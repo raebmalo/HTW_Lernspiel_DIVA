@@ -2,44 +2,44 @@
 
 body {
   font-family: 'PixelFont', sans-serif;
-  margin: 0;
-  padding: 0;
   background-color: #84879d;
 }
 
-section{
-  padding: 10px;
-  margin-left: 15%;
+header {
+  color: #09103b;
+  text-align: center;
+}
+
+h2 {
+  line-height: 1.4;
+}
+
+h3 {
+  text-align: center;
+  line-height: 1.5;
+  margin: 0 3% 5%;
 }
 
 .textbox {
-  width: 90%;
-  padding: 5%;
   color: #09103b;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.textbox h3 {
-  color: #09103b;
+  padding-left: 5%;
+  padding-right: 5%;
+  line-height: 1.9;
 }
 
 .textbox ol {
   list-style-type: decimal;
+  margin-left: 10%;
 }
 
 .textbox ul {
   list-style-type: disc;
 }
 
-header {
-  color: #09103b;
-  text-align: center;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.textbox li {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  line-height: 1.9;
 }
 
 @media only screen and (max-width: 480px) {
@@ -49,10 +49,5 @@ header {
 
   .textbox h3 {
     font-size: 1em;
-  }
-
-  .textbox ol,
-  .textbox ul {
-    padding-left: 10px !important;
   }
 }
