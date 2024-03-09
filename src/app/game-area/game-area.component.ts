@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef} from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import {GameService} from "../services/game.service";
 import {MapService} from "../services/map.service";
@@ -26,8 +26,8 @@ export class GameAreaComponent implements AfterViewInit {
     private router: Router) {
     this.player = new Player(
       {
-        position: { x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 },
-        velocity: { x: 0, y: 0 },
+        position: {x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2},
+        velocity: {x: 0, y: 0},
       },
       this,
       toastr // Übergeben Sie eine Referenz auf das GameAreaComponent-Objekt
@@ -45,10 +45,8 @@ export class GameAreaComponent implements AfterViewInit {
   game!: Game;
   buttonTexts: string[] = [];
   map!: Map;
-  svgString: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-  <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0
-  2v2h2v2h2V6h2V4h4v2h2v6h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3V6h2V4z"/>
-  </svg>`;
+  collectedHeartsCount: number = 0;
+  HeartsCount: number = 0;
 
   ngOnInit(): void {
     this.route.url.subscribe(urlSegments => {
@@ -92,7 +90,6 @@ export class GameAreaComponent implements AfterViewInit {
               this.renderer.insertBefore(parent!, newCanvas, existingCanvas);
               this.renderer.removeChild(parent!, existingCanvas);
               this.canvasRef.nativeElement = newCanvas;
-              //const c: CanvasRenderingContext2D = newCanvas.getContext('2d')!;
               if (this.map) {
                 if (this.map.map) {
                   newCanvas.width = this.map.map[0].length * Boundary.width;
@@ -109,9 +106,12 @@ export class GameAreaComponent implements AfterViewInit {
                     switch (symbol) {
                       case '-':
                         // create boundary if symbol == "-"
-                        this.boundaries.push(new Boundary(
-                          { x: j * Boundary.width, y: i * Boundary.height }
-
+                        this.boundaries.push(
+                          new Boundary(
+                          {
+                            x: j * 44,
+                            y: i * 44
+                          }
                         ));
                         break;
                       case '+':
@@ -131,6 +131,20 @@ export class GameAreaComponent implements AfterViewInit {
                               x: 44 * j,
                               y: 44 * i,
                             },
+                            itemtype: "i",
+                          })
+                        );
+                        this.HeartsCount += 1;
+                        break;
+                      case 'b':
+                        // create goal if symbol == "+"
+                        this.icons.push(
+                          new Icon({
+                            position: {
+                              x: 44 * j,
+                              y: 44 * i,
+                            },
+                            itemtype: "b",
                           })
                         );
                         break;
@@ -141,13 +155,14 @@ export class GameAreaComponent implements AfterViewInit {
                 console.error('this.map is still undefined in ngAfterViewInit');
               }
               requestAnimationFrame(() => this.animate());
-              this.initCanvas();
+              //this.initCanvas();
             } else {
               console.error('Received null map data');
-            }}, error => {
+            }
+          }, error => {
             console.error('Error loading map:', error);
           }
-          );
+        );
       }
     });
   }
@@ -177,7 +192,7 @@ export class GameAreaComponent implements AfterViewInit {
       row.forEach((symbol, j) => {
         // Draw boundaries based on symbol
         if (symbol === '-') {
-          const boundary = new Boundary({ x: j * Boundary.width, y: i * Boundary.height });
+          const boundary = new Boundary({x: j * Boundary.width, y: i * Boundary.height});
           boundary.draw(context);
           this.boundaries.push(boundary);
         }
@@ -209,11 +224,8 @@ export class GameAreaComponent implements AfterViewInit {
     this.router.navigateByUrl(`/play-the-game/${level}`).then(() => {
       window.location.reload();
     });
-    
-  collectedHeartsCount: number = 0;
-  HeartsCount: number = 0;
-  gameArea!: GameAreaComponent;
-    
+  }
+
   onLinkClick(link: string) {
     this.clickedLink = link;
   }
@@ -241,16 +253,17 @@ export class GameAreaComponent implements AfterViewInit {
 
   // resets the player position and the collision-detection
   resetGame() {
-      this.isPlayButtonDisabled = false;
-      this.player.position = {  x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 };
-      this.player.resetCollision();
-      this.player.goalReached = false; // Setzen Sie die goalReached-Flag zurück
-      this.updateRightColumn();
-      this.collectedHeartsCount = 0;this.icons.forEach((icon) => {
+    this.isPlayButtonDisabled = false;
+    this.player.position = {x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2};
+    this.player.resetCollision();
+    this.player.goalReached = false; // Setzen Sie die goalReached-Flag zurück
+    this.updateRightColumn();
+    this.collectedHeartsCount = 0;
+    this.icons.forEach(() => {
       this.icons.forEach(icon => {
         icon.collected = false;
       });
-      });
+    });
   }
 
   // deletes the code
@@ -297,8 +310,8 @@ export class GameAreaComponent implements AfterViewInit {
           this.animateAction(index + 1, steps);
           break;
       }
-      console.log("total"+this.HeartsCount);
-      console.log("collected"+this.collectedHeartsCount);
+      console.log("total" + this.HeartsCount);
+      console.log("collected" + this.collectedHeartsCount);
     } else {
       // All actions are done, reset player velocity and restart animation
       console.log("else");
@@ -321,99 +334,6 @@ export class GameAreaComponent implements AfterViewInit {
         this.animateAction(index + 1, steps);
       }
     }, 16); // 60 fps
-  }
-
-  // needed for rendering the player figure
-  constructor(private toastr: ToastrService, private renderer: Renderer2) {
-    this.player = new Player(
-      {
-        position: { x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 },
-        velocity: { x: 0, y: 0 },
-      },
-      this,
-      toastr // Übergeben Sie eine Referenz auf das GameAreaComponent-Objekt
-    );
-  }
-
-  ngAfterViewInit() {
-    // initializes the html canvas and replaces the existing canvas with the new one
-    const existingCanvas = this.canvasRef.nativeElement;
-    const newCanvas = this.renderer.createElement('canvas');
-    const parent = this.renderer.parentNode(existingCanvas);
-
-    const existingContext = existingCanvas.getContext('2d');
-    const newContext = newCanvas.getContext('2d');
-
-
-    if (existingContext && newContext) {
-      newContext.drawImage(existingCanvas, 0, 0);
-    }
-
-    // inserts the canvas and deletes the old one
-    this.renderer.insertBefore(parent!, newCanvas, existingCanvas);
-    this.renderer.removeChild(parent!, existingCanvas);
-
-    this.canvasRef.nativeElement = newCanvas;
-    const c: CanvasRenderingContext2D = newCanvas.getContext('2d')!;
-
-    // calculates width of the canvas by multiplying the pixel width and height by the number of columns and rows
-    newCanvas.width = this.map[0].length * Boundary.width;
-    newCanvas.height = this.map.length * Boundary.height;
-
-    // paints the canvas with each boundary being 44 pixels wide/high
-    this.map.forEach((row, i) => {
-      //for each row
-      row.forEach((symbol, j) => {
-        switch (symbol) {
-          case '-':
-            // create boundary if symbol == "-"
-            this.boundaries.push(
-              new Boundary({
-                position: {
-                  x: 44 * j,
-                  y: 44 * i,
-                },
-              })
-            );
-            break;
-          case '+':
-            // create goal if symbol == "+"
-            this.goal = new Goal({
-              position: {
-                x: 44 * j, // Berücksichtigen Sie die Breite der Boundary
-                y: 44 * i, // Berücksichtigen Sie die Höhe der Boundary
-              },
-            });
-            break;
-          case 'i':
-            // create goal if symbol == "+"
-            this.icons.push(
-              new Icon({
-                position: {
-                  x: 44 * j,
-                  y: 44 * i,
-                },
-                itemtype: "i",
-              })
-            );
-            this.HeartsCount += 1;
-            break;
-          case 'b':
-            // create goal if symbol == "+"
-            this.icons.push(
-              new Icon({
-                position: {
-                  x: 44 * j,
-                  y: 44 * i,
-                },
-                itemtype: "b",
-              })
-            );
-            break;
-        }
-      });
-    });
-    requestAnimationFrame(() => this.animate());
   }
 
   private animate(): void {
@@ -455,11 +375,11 @@ export class GameAreaComponent implements AfterViewInit {
       row.forEach((symbol, j) => {
         // for each symbol
         // Draw chessboard pattern
-      c.fillStyle = (i + j) % 2 === 0 ? 'white' : '#EEEEEE';
-      c.fillRect(44 * i, 44 * j, Boundary.width, Boundary.height);
+        c.fillStyle = (i + j) % 2 === 0 ? 'white' : '#EEEEEE';
+        c.fillRect(44 * i, 44 * j, Boundary.width, Boundary.height);
 
+      });
     });
-  });
   }
 
   stopAnimation(): void {
@@ -515,13 +435,13 @@ class Icon {
   // width and height of goal
   static width: number = 32;
   static height: number = 32;
-  collected: boolean = false; 
+  collected: boolean = false;
   static heartSVG: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-  <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0 
+  <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0
   2v2h2v2h2V6h2V4h4v2h2v6h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3V6h2V4z"/>
   </svg>`;
   static bugSVG: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-  <path fill="currentColor" d="M8 2h2v4h4V2h2v4h2v3h2v2h-2v2h4v2h-4v2h2v2h-2v3H6v-3H4v-2h2v-2H2v-2h4v-2H4V9h2V6h2zm8 
+  <path fill="currentColor" d="M8 2h2v4h4V2h2v4h2v3h2v2h-2v2h4v2h-4v2h2v2h-2v3H6v-3H4v-2h2v-2H2v-2h4v-2H4V9h2V6h2zm8
   6H8v3h8zm-5 5H8v7h3zm2 7h3v-7h-3zM4 9H2V7h2zm0 10v2H2v-2zm16 0h2v2h-2zm0-10V7h2v2z"/></svg>`
 
   position: { x: number; y: number };
@@ -543,11 +463,11 @@ class Icon {
       case "i":
         svgString = Icon.heartSVG;
         break;
-      case "b":   
+      case "b":
       svgString = Icon.bugSVG;
         break;
     }
-    
+
     const img = new Image();
     // decode svg string
     const decodedSvg = decodeURIComponent(svgString);
@@ -689,7 +609,7 @@ class Player {
     this.collectItemCommandExecuted = false;
   }
 
-  
+
   checkIconCollision(): void {
     if (this.collision || !this.collectItemCommandExecuted) {
       return;
@@ -718,7 +638,7 @@ class Player {
       }
     }
   }
-  
+
 
   checkGoalCollision(): boolean {
     // calculate x and y distance to the finish-square
@@ -726,7 +646,7 @@ class Player {
     const distanceY = this.position.y - (this.gameArea.goal.position.y + 22);
 
     // if finish reached, create alert
-    if (distanceX == 0 && distanceY == 0 && this.gameArea.collectedHeartsCount == this.gameArea.HeartsCount && this.goalReached !== true) {
+    if (distanceX == 0 && distanceY == 0 && this.gameArea.collectedHeartsCount == this.gameArea.HeartsCount && !this.goalReached) {
       console.log('Goal reached!');
       alert("Ziel erreicht");
       this.showToast();
