@@ -5,7 +5,8 @@ class gameController {
 
   addGame = async (req: Request, res: Response) => {
     const data = {
-      level: req.body.level
+      level: req.body.level,
+      description: req.body.description
     }
     const game = await GameServices.createGame(data)
     res.status(201).send(game)

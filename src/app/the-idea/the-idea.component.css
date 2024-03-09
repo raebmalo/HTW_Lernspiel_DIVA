@@ -2,29 +2,27 @@
 
 body {
   font-family: 'PixelFont', sans-serif;
-  margin: 0;
-  padding: 0;
   background-color: #84879d;
-}
-
-.textbox {
-  width: 90%;
-  padding: 5%;
-  color: #09103b;
-  background-color: #84879d;
-}
-
-.textbox h2 {
-  color: #09103b;
-}
-
-.textbox ol {
-  list-style-type: decimal;
-  padding-left: 20px;
 }
 
 header {
   color: #09103b;
   text-align: center;
-  padding: 20px;
+}
+
+h2 {
+  line-height: 1.5;
+}
+
+h3 {
+  text-align: center;
+  line-height: 1.5;
+  margin: 0 3% 5%;
+}
+
+.textbox {
+  color: #09103b;
+  padding-left: 5%;
+  padding-right: 5%;
+  line-height: 1.9;
 }

@@ -1,6 +1,11 @@
 import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { timeout } from 'rxjs'; // also not used?
 import { ToastrService } from 'ngx-toastr';
+import {GameService} from "../services/game.service";
+import {MapService} from "../services/map.service";
+import {Game} from "../models/game.model";
+import {Map} from "../models/map.model";
+import {ActivatedRoute, NavigationEnd} from "@angular/router";
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-game-area',
@@ -11,6 +16,24 @@ import { ToastrService } from 'ngx-toastr';
 export class GameAreaComponent implements AfterViewInit {
   @ViewChild('myCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
+  // needed for rendering the player figure
+  constructor(
+    private toastr: ToastrService,
+    private renderer: Renderer2,
+    private gameService: GameService,
+    private mapService: MapService,
+    private route: ActivatedRoute,
+    private router: Router) {
+    this.player = new Player(
+      {
+        position: { x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 },
+        velocity: { x: 0, y: 0 },
+      },
+      this,
+      toastr // Übergeben Sie eine Referenz auf das GameAreaComponent-Objekt
+    );
+  }
+
   boundaries: Boundary[] = [];
   buttonText: string[] = [];
   icons: Icon[] = [];
@@ -18,87 +41,179 @@ export class GameAreaComponent implements AfterViewInit {
   animationActive: boolean = true;
   isPlayButtonDisabled: boolean = false;
   goal!: Goal;
-  dynamicText: string = 'Initial text in the textbox';
   clickedLink: string | null = null;
+  game!: Game;
+  buttonTexts: string[] = [];
+  map!: Map;
+  svgString: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+  <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0
+  2v2h2v2h2V6h2V4h4v2h2v6h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3V6h2V4z"/>
+  </svg>`;
+
+  ngOnInit(): void {
+    this.route.url.subscribe(urlSegments => {
+      const levelParam = urlSegments.map(segment => segment.path)[1];
+      if (levelParam) {
+        this.gameService.getGameByLevelFromDatabase(levelParam).subscribe(
+          (game: Game) => {
+            this.game = game;
+          },
+          error => {
+            console.error('Error loading game:', error);
+          }
+        );
+      }
+    });
+    this.clickedLink = localStorage.getItem('clickedLink');
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.updateClickedLink();
+      }
+    });
+  }
+
+  ngAfterViewInit() {
+    this.route.url.subscribe(urlSegments => {
+      const levelParam = urlSegments.map(segment => segment.path)[1];
+      if (levelParam) {
+        this.mapService.getMapByLevel(levelParam).subscribe(
+          (map: Map) => {
+            if (map) {
+              this.map = map;
+              const existingCanvas = this.canvasRef.nativeElement;
+              const newCanvas = this.renderer.createElement('canvas');
+              const parent = this.renderer.parentNode(existingCanvas);
+              const existingContext = existingCanvas.getContext('2d');
+              const newContext = newCanvas.getContext('2d');
+              if (existingContext && newContext) {
+                newContext.drawImage(existingCanvas, 0, 0);
+              }
+              // inserts the canvas and deletes the old one
+              this.renderer.insertBefore(parent!, newCanvas, existingCanvas);
+              this.renderer.removeChild(parent!, existingCanvas);
+              this.canvasRef.nativeElement = newCanvas;
+              //const c: CanvasRenderingContext2D = newCanvas.getContext('2d')!;
+              if (this.map) {
+                if (this.map.map) {
+                  newCanvas.width = this.map.map[0].length * Boundary.width;
+                }
+                if (this.map && this.map.map) {
+                  newCanvas.height = this.map.map.length * Boundary.height;
+                } else {
+                  console.error('no map')
+                }
+                // paints the canvas with each boundary being 44 pixels wide/high
+                this.map.map?.forEach((row, i) => {
+                  //for each row
+                  row.forEach((symbol, j) => {
+                    switch (symbol) {
+                      case '-':
+                        // create boundary if symbol == "-"
+                        this.boundaries.push(new Boundary(
+                          { x: j * Boundary.width, y: i * Boundary.height }
+
+                        ));
+                        break;
+                      case '+':
+                        // create goal if symbol == "+"
+                        this.goal = new Goal({
+                          position: {
+                            x: 44 * j, // Berücksichtigen Sie die Breite der Boundary
+                            y: 44 * i, // Berücksichtigen Sie die Höhe der Boundary
+                          },
+                        });
+                        break;
+                      case 'i':
+                        // create goal if symbol == "+"
+                        this.icons.push(
+                          new Icon({
+                            position: {
+                              x: 44 * j,
+                              y: 44 * i,
+                            },
+                          })
+                        );
+                        break;
+                    }
+                  });
+                });
+              } else {
+                console.error('this.map is still undefined in ngAfterViewInit');
+              }
+              requestAnimationFrame(() => this.animate());
+              this.initCanvas();
+            } else {
+              console.error('Received null map data');
+            }}, error => {
+            console.error('Error loading map:', error);
+          }
+          );
+      }
+    });
+  }
+
+  initCanvas(): void {
+    const canvas: HTMLCanvasElement = this.canvasRef.nativeElement;
+    const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
+    if (context && this.map && this.map.map) {
+      // Calculate canvas dimensions
+      const canvasWidth = this.map.map[0].length * Boundary.width;
+      const canvasHeight = this.map.map.length * Boundary.height;
+
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+
+      // Draw the canvas elements
+      this.drawCanvas(context);
+    } else {
+      console.error('Canvas context not available or map/map data is missing');
+    }
+  }
+
+  drawCanvas(context: CanvasRenderingContext2D): void {
+    if (!context) return;
+
+    this.map.map?.forEach((row, i) => {
+      row.forEach((symbol, j) => {
+        // Draw boundaries based on symbol
+        if (symbol === '-') {
+          const boundary = new Boundary({ x: j * Boundary.width, y: i * Boundary.height });
+          boundary.draw(context);
+          this.boundaries.push(boundary);
+        }
+      });
+    });
+
+    if (this.goal) {
+      this.goal.draw(context);
+    }
+  }
+
+  updateClickedLink() {
+    const url = this.router.url;
+    if (url.includes('level-1')) {
+      this.clickedLink = 'level-1';
+    } else if (url.includes('level-2')) {
+      this.clickedLink = 'level-2';
+    } else if (url.includes('level-3')) {
+      this.clickedLink = 'level-3';
+    } else {
+      this.clickedLink = '';
+    }
+    localStorage.setItem('clickedLink', this.clickedLink);
+  }
+
+  reloadPage(level: string) {
+    this.clickedLink = level;
+    localStorage.setItem('clickedLink', this.clickedLink);
+    this.router.navigateByUrl(`/play-the-game/${level}`).then(() => {
+      window.location.reload();
+    });
+    
   collectedHeartsCount: number = 0;
   HeartsCount: number = 0;
   gameArea!: GameAreaComponent;
-
-  // map two dimensional array
-  map: string[][] = [
-    ['-','-','-','-','-','-','-','-','-','-'],
-    ['-',' ',' ',' ','-',' ','-',' ',' ','-'],
-    ['-','-','-',' ','-','b','-','-',' ','-'],
-    ['-',' ',' ','b','-','i','-','-','i','-'],
-    ['-',' ','-','-','-',' ','-','-',' ','-'],
-    ['-',' ',' ',' ',' ',' ','i',' ',' ','-'],
-    ['-','-','-','-','-','-','-','-',' ','-'],
-    ['-','-',' ',' ',' ','-','b',' ',' ','-'],
-    ['-','+',' ','-',' ',' ',' ','-',' ','-'],
-    ['-','-','-','-','-','-','-','-','-','-'],
-  ];
-  map_lvl1: string[][] = [
-    ['-','-','-','-','-'],
-    ['-',' ',' ',' ','-'],
-    ['-',' ','+',' ','-'],
-    ['-',' ',' ',' ','-'],
-    ['-','-','-','-','-'],
     
-  ];
-  map_lvl2: string[][] =  [
-    ['-','-','-','-','-','-','-','-','-','-'],
-    ['-',' ',' ',' ','-',' ','-',' ',' ','-'],
-    ['-','-','-',' ','-',' ','-','-',' ','-'],
-    ['-',' ',' ',' ','-',' ','-','-',' ','-'],
-    ['-',' ','-','-','-',' ','-','-',' ','-'],
-    ['-',' ',' ',' ',' ',' ',' ',' ',' ','-'],
-    ['-','-','-','-','-','-','-','-',' ','-'],
-    ['-','-',' ',' ',' ','-',' ',' ',' ','-'],
-    ['-','+',' ','-',' ',' ',' ','-',' ','-'],
-    ['-','-','-','-','-','-','-','-','-','-'],
-    ];
-  map_lvl3: string[][] = [
-    ['-','-','-','-','-','-','-','-','-'],
-    ['-',' ','-','i','-',' ','-','i','-'],
-    ['-',' ','-',' ',' ',' ','-',' ','-'],
-    ['-',' ','-',' ','-',' ',' ',' ','-'],
-    ['-',' ',' ',' ','-',' ','-','-','-'],
-    ['-','-','-','-','-',' ',' ','i','-'],
-    ['-',' ',' ',' ','-',' ','-','-','-'],
-    ['-','+','-',' ',' ','i',' ','i','-'],
-    ['-','-','-','-','-','-','-','-','-'],
-    ];
-  map_lvl4: string[][] = [
-      ['-','-','-','-','-','-','-','-','-','-'],
-      ['-',' ',' ',' ','-',' ','-',' ',' ','-'],
-      ['-','-','-',' ','-','b','-','-',' ','-'],
-      ['-',' ',' ','b','-','i','-','-','i','-'],
-      ['-',' ','-','-','-',' ','-','-',' ','-'],
-      ['-',' ',' ',' ',' ',' ','i',' ',' ','-'],
-      ['-','-','-','-','-','-','-','-',' ','-'],
-      ['-','-',' ',' ',' ','-','b',' ',' ','-'],
-      ['-','+',' ','-',' ',' ',' ','-',' ','-'],
-      ['-','-','-','-','-','-','-','-','-','-'],
-    ];
-  map_lvl5: string[][] = [
-    ['-','-','-','-','-','-','-','-','-','-','-','-','-','-','-'],
-    ['-',' ','-','i',' ',' ',' ',' ',' ',' ',' ',' ','-','i','-'],
-    ['-',' ','-','b','-','-','-','-','-','-','-',' ','-',' ','-'],
-    ['-',' ','-',' ','-',' ',' ',' ',' ',' ','i',' ','-',' ','-'],
-    ['-',' ',' ',' ','-','b','-','-','-','-','-',' ','-',' ','-'],
-    ['-','-','-','-','-',' ','-','+','b',' ','-',' ','-',' ','-'],
-    ['-','i',' ',' ',' ',' ','-','-','-',' ','-','i',' ',' ','-'],
-    ['-',' ','-','-','-',' ',' ',' ',' ',' ','-','-','-',' ','-'],
-    ['-','b','-','i',' ',' ','-','-','-',' ','-','i','-',' ','-'],
-    ['-',' ','-','-','-','-','-','i','-',' ','-',' ','-',' ','-'],
-    ['-',' ','-','i',' ',' ',' ',' ','-',' ','-',' ','-',' ','-'],
-    ['-',' ','-','-','-','-','-',' ','-',' ',' ',' ',' ',' ','-'],
-    ['-',' ','-',' ','b',' ','-',' ','-',' ','-',' ','-','-','-'],
-    ['-',' ',' ',' ','-',' ',' ',' ','i',' ','-',' ',' ','i','-'],
-    ['-','-','-','-','-','-','-','-','-','-','-','-','-','-','-']
-    ];
-
-
   onLinkClick(link: string) {
     this.clickedLink = link;
   }
@@ -109,13 +224,18 @@ export class GameAreaComponent implements AfterViewInit {
     this.updateRightColumn();
   }
 
-  // updates the html element of the code-column
   updateRightColumn() {
-    let rightColumn = document.querySelector('.text-column');
-    // adds line breaks so that the code will appear vertically
-    let rightColumnText: string = this.buttonText.join('\n');
+    const rightColumn = document.querySelector('.right-column');
     if (rightColumn instanceof HTMLElement) {
-      rightColumn.textContent = rightColumnText;
+      const textColumn = rightColumn.querySelector('.text-column');
+      if (textColumn instanceof HTMLElement) {
+        textColumn.innerHTML = '';
+        this.buttonText.forEach(text => {
+          const p = document.createElement('p');
+          p.textContent = text;
+          textColumn.appendChild(p);
+        });
+      }
     }
   }
 
@@ -151,7 +271,7 @@ export class GameAreaComponent implements AfterViewInit {
 
   animateAction(index: number, steps: number) {
     // finds the direction in which the player-figure shold move
-    if ((index < this.buttonText.length) && (this.animationActive == true)) {
+    if ((index < this.buttonText.length) && this.animationActive) {
       console.log(index)
       const element = this.buttonText[index];
       switch (element) {
@@ -303,7 +423,7 @@ export class GameAreaComponent implements AfterViewInit {
     }
     const c: CanvasRenderingContext2D = this.canvasRef.nativeElement.getContext('2d')!;
 
-    // clears rectangle on each frame 
+    // clears rectangle on each frame
     c.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
     //prints chesspattern
     this.chesspattern(this.map);
@@ -327,10 +447,10 @@ export class GameAreaComponent implements AfterViewInit {
     this.player.draw();
     requestAnimationFrame(() => this.animate());
   }
-  
-  private chesspattern(map: String[][]): void {
+
+  private chesspattern(map: Map): void {
     const c: CanvasRenderingContext2D = this.canvasRef.nativeElement.getContext('2d')!;
-    map.forEach((row, i) => {
+    map.map?.forEach((row, i) => {
       //for each row
       row.forEach((symbol, j) => {
         // for each symbol
@@ -353,25 +473,19 @@ export class GameAreaComponent implements AfterViewInit {
 }
 
 class Boundary {
-
   // width and height of each boundary
   static width: number = 44;
   static height: number = 44;
 
   position: { x: number; y: number };
-  width: number;
-  height: number;
 
-  constructor({ position }: { position: { x: number; y: number } }) {
+  constructor(position: { x: number; y: number }) {
     this.position = position;
-    this.width = 44;
-    this.height = 44;
   }
 
-  // make the goal a dark blue box
-  draw(c: CanvasRenderingContext2D): void {
-    c.fillStyle = '#09103B';
-    c.fillRect(this.position.x, this.position.y, this.width, this.height);
+  draw(context: CanvasRenderingContext2D): void {
+    context.fillStyle = '#09103B';
+    context.fillRect(this.position.x, this.position.y, Boundary.width, Boundary.height);
   }
 }
 
@@ -441,7 +555,7 @@ class Icon {
     img.src = 'data:image/svg+xml;base64,' + btoa(decodedSvg);
 
     //draws image
-    
+
     if (c) {
       // calculate the center position of a square
       const centerX = this.position.x + Boundary.width / 2;
@@ -489,19 +603,29 @@ class Player {
   }
 
   draw(): void {
-    // draws the canvas by selecting the canvas div in the html code
-    const c: CanvasRenderingContext2D = document.querySelector('canvas')!.getContext('2d')!;
-    c.beginPath();
-    // paints a circle that turns red when colliding and is yellow by default
-    c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
-    if(this.collision === true) {
-      c.fillStyle = 'red';
+    if (!this.gameArea.canvasRef) {
+      console.error('Canvas reference not found');
+      return;
     }
-    else {
-    c.fillStyle = '#fccb00';
+    const canvas: HTMLCanvasElement = this.gameArea.canvasRef.nativeElement;
+    if (!canvas) {
+      console.error('Canvas element not found');
+      return;
     }
-    c.fill();
-    c.closePath();
+    const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
+    if (!context) {
+      console.error('Failed to get context');
+      return;
+    }
+    context.beginPath();
+    context.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+    if (this.collision) {
+      context.fillStyle = 'red';
+    } else {
+      context.fillStyle = '#fccb00';
+    }
+    context.fill();
+    context.closePath();
   }
 
   update(): void {
@@ -529,8 +653,8 @@ class Player {
 
     for (const boundary of boundaries) {
       // calculates the distance between the center of the circle (player) and the closest point on the rectangle (boundary)
-      const closestX = Math.max(boundary.position.x, Math.min(this.position.x, boundary.position.x + boundary.width));
-      const closestY = Math.max(boundary.position.y, Math.min(this.position.y, boundary.position.y + boundary.height));
+      const closestX = Math.max(boundary.position.x, Math.min(this.position.x, boundary.position.x + Boundary.width));
+      const closestY = Math.max(boundary.position.y, Math.min(this.position.y, boundary.position.y + Boundary.height));
 
       // calculate the distance between the closest point on the rectangle and the center of the circle
       const distanceX = this.position.x - closestX;
