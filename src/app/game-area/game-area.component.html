@@ -17,7 +17,7 @@
   <div class="playdiv">
     <svg (click)="startGame()" [class.disabled]="isPlayButtonDisabled" xmlns="http://www.w3.org/2000/svg" width="100px" height="100px" viewBox="0 0 24 24">
       <path stroke="#09103B" fill="#09103B" d="M10 20H8V4h2v2h2v3h2v2h2v2h-2v2h-2v3h-2v2z"/>
-    </svg>
+    </svg>    
   </div>
 </div>
 <div class="container">
@@ -29,11 +29,12 @@
 <div class="contentbox">
   <div class="left-column">
     <div class="button-container">
-      <button class="button" (click)="updateText('left')">Turn left</button>
-      <button class="button" (click)="updateText('right')">Turn right</button>
-      <button class="button" (click)="updateText('up')">Turn up</button>
-      <button class="button" (click)="updateText('down')">Turn down</button>
-      <button class="button" (click)="updateText('move')">Move</button>
+      <p>Collected Hearts: {{ collectedHeartsCount }}/{{ HeartsCount }}</p>
+      <button class="button" (click)="updateText('goLeft();')">goLeft();</button>
+      <button class="button" (click)="updateText('goRight();')">goRight();</button>
+      <button class="button" (click)="updateText('goUp();')">goUp();</button>
+      <button class="button" (click)="updateText('goDown();')">goDown();</button>
+      <button class="button" (click)="updateText('collectItem();')">collectItem();</button>
     </div>
   </div>
   <div class="right-column"  #rightColumn>

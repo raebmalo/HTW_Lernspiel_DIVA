@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { timeout } from 'rxjs'; // also not used?
 import { ToastrService } from 'ngx-toastr';
 
@@ -20,16 +20,35 @@ export class GameAreaComponent implements AfterViewInit {
   goal!: Goal;
   dynamicText: string = 'Initial text in the textbox';
   clickedLink: string | null = null;
-  
-  svgString: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-  <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0 
-  2v2h2v2h2V6h2V4h4v2h2v6h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3V6h2V4z"/>
-  </svg>`;;
+  collectedHeartsCount: number = 0;
+  HeartsCount: number = 0;
+  gameArea!: GameAreaComponent;
+
   // map two dimensional array
   map: string[][] = [
     ['-','-','-','-','-','-','-','-','-','-'],
-    ['-',' ',' ',' ','-',' ','-',' ','i','-'],
-    ['-','-','-','i','-','i','-','-',' ','-'],
+    ['-',' ',' ',' ','-',' ','-',' ',' ','-'],
+    ['-','-','-',' ','-','b','-','-',' ','-'],
+    ['-',' ',' ','b','-','i','-','-','i','-'],
+    ['-',' ','-','-','-',' ','-','-',' ','-'],
+    ['-',' ',' ',' ',' ',' ','i',' ',' ','-'],
+    ['-','-','-','-','-','-','-','-',' ','-'],
+    ['-','-',' ',' ',' ','-','b',' ',' ','-'],
+    ['-','+',' ','-',' ',' ',' ','-',' ','-'],
+    ['-','-','-','-','-','-','-','-','-','-'],
+  ];
+  map_lvl1: string[][] = [
+    ['-','-','-','-','-'],
+    ['-',' ',' ',' ','-'],
+    ['-',' ','+',' ','-'],
+    ['-',' ',' ',' ','-'],
+    ['-','-','-','-','-'],
+    
+  ];
+  map_lvl2: string[][] =  [
+    ['-','-','-','-','-','-','-','-','-','-'],
+    ['-',' ',' ',' ','-',' ','-',' ',' ','-'],
+    ['-','-','-',' ','-',' ','-','-',' ','-'],
     ['-',' ',' ',' ','-',' ','-','-',' ','-'],
     ['-',' ','-','-','-',' ','-','-',' ','-'],
     ['-',' ',' ',' ',' ',' ',' ',' ',' ','-'],
@@ -37,7 +56,48 @@ export class GameAreaComponent implements AfterViewInit {
     ['-','-',' ',' ',' ','-',' ',' ',' ','-'],
     ['-','+',' ','-',' ',' ',' ','-',' ','-'],
     ['-','-','-','-','-','-','-','-','-','-'],
-  ];
+    ];
+  map_lvl3: string[][] = [
+    ['-','-','-','-','-','-','-','-','-'],
+    ['-',' ','-','i','-',' ','-','i','-'],
+    ['-',' ','-',' ',' ',' ','-',' ','-'],
+    ['-',' ','-',' ','-',' ',' ',' ','-'],
+    ['-',' ',' ',' ','-',' ','-','-','-'],
+    ['-','-','-','-','-',' ',' ','i','-'],
+    ['-',' ',' ',' ','-',' ','-','-','-'],
+    ['-','+','-',' ',' ','i',' ','i','-'],
+    ['-','-','-','-','-','-','-','-','-'],
+    ];
+  map_lvl4: string[][] = [
+      ['-','-','-','-','-','-','-','-','-','-'],
+      ['-',' ',' ',' ','-',' ','-',' ',' ','-'],
+      ['-','-','-',' ','-','b','-','-',' ','-'],
+      ['-',' ',' ','b','-','i','-','-','i','-'],
+      ['-',' ','-','-','-',' ','-','-',' ','-'],
+      ['-',' ',' ',' ',' ',' ','i',' ',' ','-'],
+      ['-','-','-','-','-','-','-','-',' ','-'],
+      ['-','-',' ',' ',' ','-','b',' ',' ','-'],
+      ['-','+',' ','-',' ',' ',' ','-',' ','-'],
+      ['-','-','-','-','-','-','-','-','-','-'],
+    ];
+  map_lvl5: string[][] = [
+    ['-','-','-','-','-','-','-','-','-','-','-','-','-','-','-'],
+    ['-',' ','-','i',' ',' ',' ',' ',' ',' ',' ',' ','-','i','-'],
+    ['-',' ','-','b','-','-','-','-','-','-','-',' ','-',' ','-'],
+    ['-',' ','-',' ','-',' ',' ',' ',' ',' ','i',' ','-',' ','-'],
+    ['-',' ',' ',' ','-','b','-','-','-','-','-',' ','-',' ','-'],
+    ['-','-','-','-','-',' ','-','+','b',' ','-',' ','-',' ','-'],
+    ['-','i',' ',' ',' ',' ','-','-','-',' ','-','i',' ',' ','-'],
+    ['-',' ','-','-','-',' ',' ',' ',' ',' ','-','-','-',' ','-'],
+    ['-','b','-','i',' ',' ','-','-','-',' ','-','i','-',' ','-'],
+    ['-',' ','-','-','-','-','-','i','-',' ','-',' ','-',' ','-'],
+    ['-',' ','-','i',' ',' ',' ',' ','-',' ','-',' ','-',' ','-'],
+    ['-',' ','-','-','-','-','-',' ','-',' ',' ',' ',' ',' ','-'],
+    ['-',' ','-',' ','b',' ','-',' ','-',' ','-',' ','-','-','-'],
+    ['-',' ',' ',' ','-',' ',' ',' ','i',' ','-',' ',' ','i','-'],
+    ['-','-','-','-','-','-','-','-','-','-','-','-','-','-','-']
+    ];
+
 
   onLinkClick(link: string) {
     this.clickedLink = link;
@@ -61,10 +121,16 @@ export class GameAreaComponent implements AfterViewInit {
 
   // resets the player position and the collision-detection
   resetGame() {
+      this.isPlayButtonDisabled = false;
       this.player.position = {  x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 };
       this.player.resetCollision();
       this.player.goalReached = false; // Setzen Sie die goalReached-Flag zurück
       this.updateRightColumn();
+      this.collectedHeartsCount = 0;this.icons.forEach((icon) => {
+      this.icons.forEach(icon => {
+        icon.collected = false;
+      });
+      });
   }
 
   // deletes the code
@@ -74,10 +140,13 @@ export class GameAreaComponent implements AfterViewInit {
   }
 
   startGame() {
-    console.log("start game");
+    if (this.isPlayButtonDisabled) {
+      // Spiel ist bereits gestartet, ignoriere weitere Klicks
+      return;
+    }
+    console.log("Spiel startet");
+    this.isPlayButtonDisabled = true; // Deaktiviere den Play-Button
     this.animateAction(0, 44);
-    // TODO - Funktion Animation beendet --> Button disabled:
-    this.isPlayButtonDisabled = true;
   }
 
   animateAction(index: number, steps: number) {
@@ -86,23 +155,30 @@ export class GameAreaComponent implements AfterViewInit {
       console.log(index)
       const element = this.buttonText[index];
       switch (element) {
-        case 'left':
+        case 'goLeft();':
           console.log("left");
           this.animateMovement(index, -1, 0, steps);
           break;
-        case 'right':
+        case 'goRight();':
           console.log("right");
           this.animateMovement(index, 1, 0, steps);
           break;
-        case 'up':
+        case 'goUp();':
           console.log("up");
           this.animateMovement(index, 0, -1, steps);
           break;
-        case 'down':
+        case 'goDown();':
           console.log("down");
           this.animateMovement(index, 0, 1, steps);
           break;
+        case 'collectItem();': // Neuer Fall für das Einsammeln von Items
+          console.log("collecting item");
+          this.player.collectItem(); // Rufe die neue Methode auf, wenn collectItem ausgeführt wird
+          this.animateAction(index + 1, steps);
+          break;
       }
+      console.log("total"+this.HeartsCount);
+      console.log("collected"+this.collectedHeartsCount);
     } else {
       // All actions are done, reset player velocity and restart animation
       console.log("else");
@@ -197,6 +273,20 @@ export class GameAreaComponent implements AfterViewInit {
                   x: 44 * j,
                   y: 44 * i,
                 },
+                itemtype: "i",
+              })
+            );
+            this.HeartsCount += 1;
+            break;
+          case 'b':
+            // create goal if symbol == "+"
+            this.icons.push(
+              new Icon({
+                position: {
+                  x: 44 * j,
+                  y: 44 * i,
+                },
+                itemtype: "b",
               })
             );
             break;
@@ -223,8 +313,11 @@ export class GameAreaComponent implements AfterViewInit {
     });
     // print goal and update player
     this.goal.draw(c);
+    this.player.checkIconCollision()
     this.icons.forEach((icon) => {
-      icon.drawSVGIconOnCanvas(this.svgString,c);
+      if (!icon.collected) {
+        icon.drawSVGIconOnCanvas(icon.itemtype, c);
+      }
     });
     this.player.update();
     this.player.checkBoundaryCollision(this.boundaries);
@@ -244,6 +337,7 @@ export class GameAreaComponent implements AfterViewInit {
         // Draw chessboard pattern
       c.fillStyle = (i + j) % 2 === 0 ? 'white' : '#EEEEEE';
       c.fillRect(44 * i, 44 * j, Boundary.width, Boundary.height);
+
     });
   });
   }
@@ -307,19 +401,39 @@ class Icon {
   // width and height of goal
   static width: number = 32;
   static height: number = 32;
+  collected: boolean = false; 
+  static heartSVG: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+  <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0 
+  2v2h2v2h2V6h2V4h4v2h2v6h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3V6h2V4z"/>
+  </svg>`;
+  static bugSVG: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+  <path fill="currentColor" d="M8 2h2v4h4V2h2v4h2v3h2v2h-2v2h4v2h-4v2h2v2h-2v3H6v-3H4v-2h2v-2H2v-2h4v-2H4V9h2V6h2zm8 
+  6H8v3h8zm-5 5H8v7h3zm2 7h3v-7h-3zM4 9H2V7h2zm0 10v2H2v-2zm16 0h2v2h-2zm0-10V7h2v2z"/></svg>`
 
   position: { x: number; y: number };
   width: number;
   height: number;
+  itemtype: string;
 
-  constructor({ position }: { position: { x: number; y: number } }) {
+  constructor({ position, itemtype}: { position: { x: number; y: number }, itemtype: string }) {
     this.position = position;
+    this.itemtype = itemtype
     this.width = 32;
     this.height = 32;
   }
 
   // draw svg on canvas
-  drawSVGIconOnCanvas(svgString: string, c: CanvasRenderingContext2D): void {
+  drawSVGIconOnCanvas(icontype: string, c: CanvasRenderingContext2D): void {
+    let svgString: string = "";
+    switch(icontype){
+      case "i":
+        svgString = Icon.heartSVG;
+        break;
+      case "b":   
+      svgString = Icon.bugSVG;
+        break;
+    }
+    
     const img = new Image();
     // decode svg string
     const decodedSvg = decodeURIComponent(svgString);
@@ -426,11 +540,8 @@ class Player {
       // checks if the distance is less than the radius squared (collision occurs)
       if (distanceSquared < this.radius * this.radius) {
         console.log("Collision detected!");
-        //console.log("Player position:", this.position);
-        //console.log("Boundary position:", boundary.position);
         this.collision = true;
         alert("Kollision Spiel beendet");
-        this.gameArea.isPlayButtonDisabled = true;
         this.resetVel();
         this.draw();
         this.stopAnimation();
@@ -440,32 +551,63 @@ class Player {
   }
 
   showToast(): void {
-    this.toastr.success('Herzlichen Glückwunsch!', 'Spiel beendet', {
+    this.toastr.success('Herzlichen Glückwunsch!', 'Spiel beendet.', {
       positionClass: 'toast-center', // Fügen Sie diese Zeile hinzu
     });
   }
+  collectItemCommandExecuted: boolean = false;
+
+  // Neue Methode, um die Ausführung des collectItem Befehls zu verarbeiten
+  collectItem(): void {
+    this.collectItemCommandExecuted = true;
+    this.checkIconCollision();
+    // Setze die Flag nach der Überprüfung zurück, um sicherzustellen, dass Items nur bei expliziter Ausführung gesammelt werden
+    this.collectItemCommandExecuted = false;
+  }
+
+  
+  checkIconCollision(): void {
+    if (this.collision || !this.collectItemCommandExecuted) {
+      return;
+    }
+    for (const icon of this.gameArea.icons) {
+      if (icon.collected) {
+        continue;
+      }
+      const closestX = Math.max(icon.position.x, Math.min(this.position.x, icon.position.x + icon.width));
+      const closestY = Math.max(icon.position.y, Math.min(this.position.y, icon.position.y + icon.height));
+      const distanceX = this.position.x - closestX;
+      const distanceY = this.position.y - closestY;
+      const distanceSquared = distanceX * distanceX + distanceY * distanceY;
+      if (distanceSquared < this.radius * this.radius) {
+        icon.collected = true;
+        if(icon.itemtype === "b"){
+          alert("Es wurde ein Bug eingesammelt, Spiel beendet");
+          this.gameArea.isPlayButtonDisabled = true; // Deaktiviert den Start-Button, um weitere Aktionen zu verhindern
+          this.stopAnimation(); // Stoppt die Animation und damit das Spiel
+          this.gameArea.resetGame()
+          return; // Verlässt die Schleife und Funktion sofort, um keine weiteren Aktionen zuzulassen
+        }
+        if(icon.itemtype === "i"){
+          this.gameArea.collectedHeartsCount++;
+        }
+      }
+    }
+  }
+  
 
   checkGoalCollision(): boolean {
-    if (this.goalReached) {
-      return false;
-    }
-    //console.log("x: "+this.gameArea.goal.position.x + 22);
-    //console.log("y: "+this.gameArea.goal.position.y + 22);
-
     // calculate x and y distance to the finish-square
     const distanceX = this.position.x - (this.gameArea.goal.position.x + 22);
     const distanceY = this.position.y - (this.gameArea.goal.position.y + 22);
-    //console.log("x distance: "+distanceX);
-    //console.log("y distance: "+distanceY);
 
     // if finish reached, create alert
-    if (distanceX == 0 && distanceY == 0) {
+    if (distanceX == 0 && distanceY == 0 && this.gameArea.collectedHeartsCount == this.gameArea.HeartsCount && this.goalReached !== true) {
       console.log('Goal reached!');
-      this.showToast()
-      alert("Ziel erreicht")
+      alert("Ziel erreicht");
+      this.showToast();
       this.gameArea.isPlayButtonDisabled = true;
       this.goalReached = true;
-      this.stopAnimation();
       return true;
     }
     return false;
