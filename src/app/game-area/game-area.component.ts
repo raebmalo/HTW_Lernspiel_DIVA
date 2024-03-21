@@ -30,7 +30,7 @@ export class GameAreaComponent implements AfterViewInit {
         velocity: {x: 0, y: 0},
       },
       this,
-      toastr // Übergeben Sie eine Referenz auf das GameAreaComponent-Objekt
+      toastr // reference to the GameAreaComponent-object
     );
   }
 
@@ -49,9 +49,11 @@ export class GameAreaComponent implements AfterViewInit {
   HeartsCount: number = 0;
 
   ngOnInit(): void {
+    // on init
     this.route.url.subscribe(urlSegments => {
       const levelParam = urlSegments.map(segment => segment.path)[1];
       if (levelParam) {
+        // asks database for game-map
         this.gameService.getGameByLevelFromDatabase(levelParam).subscribe(
           (game: Game) => {
             this.game = game;
@@ -71,6 +73,7 @@ export class GameAreaComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+    // after init
     this.route.url.subscribe(urlSegments => {
       const levelParam = urlSegments.map(segment => segment.path)[1];
       if (levelParam) {
@@ -78,6 +81,7 @@ export class GameAreaComponent implements AfterViewInit {
           (map: Map) => {
             if (map) {
               this.map = map;
+              // creating all constant canvas references
               const existingCanvas = this.canvasRef.nativeElement;
               const newCanvas = this.renderer.createElement('canvas');
               const parent = this.renderer.parentNode(existingCanvas);
@@ -118,8 +122,8 @@ export class GameAreaComponent implements AfterViewInit {
                         // create goal if symbol == "+"
                         this.goal = new Goal({
                           position: {
-                            x: 44 * j, // Berücksichtigen Sie die Breite der Boundary
-                            y: 44 * i, // Berücksichtigen Sie die Höhe der Boundary
+                            x: 44 * j, // take width into account
+                            y: 44 * i, // take height into account
                           },
                         });
                         break;
@@ -206,6 +210,7 @@ export class GameAreaComponent implements AfterViewInit {
 
   updateClickedLink() {
     const url = this.router.url;
+    // route based on the url level selection
     if (url.includes('level-1')) {
       this.clickedLink = 'level-1';
     } else if (url.includes('level-2')) {
@@ -219,6 +224,7 @@ export class GameAreaComponent implements AfterViewInit {
   }
 
   reloadPage(level: string) {
+    // reload the right level on url change
     this.clickedLink = level;
     localStorage.setItem('clickedLink', this.clickedLink);
     this.router.navigateByUrl(`/play-the-game/${level}`).then(() => {
@@ -237,6 +243,7 @@ export class GameAreaComponent implements AfterViewInit {
   }
 
   updateRightColumn() {
+    // update text column
     const rightColumn = document.querySelector('.right-column');
     if (rightColumn instanceof HTMLElement) {
       const textColumn = rightColumn.querySelector('.text-column');
@@ -256,7 +263,7 @@ export class GameAreaComponent implements AfterViewInit {
     this.isPlayButtonDisabled = false;
     this.player.position = {x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2};
     this.player.resetCollision();
-    this.player.goalReached = false; // Setzen Sie die goalReached-Flag zurück
+    this.player.goalReached = false; // reset goalReached-Flag
     this.updateRightColumn();
     this.collectedHeartsCount = 0;
     this.icons.forEach(() => {
@@ -274,11 +281,11 @@ export class GameAreaComponent implements AfterViewInit {
 
   startGame() {
     if (this.isPlayButtonDisabled) {
-      // Spiel ist bereits gestartet, ignoriere weitere Klicks
+      // game started, ignore future clicks as long as buttonDisabled == true
       return;
     }
     console.log("Spiel startet");
-    this.isPlayButtonDisabled = true; // Deaktiviere den Play-Button
+    this.isPlayButtonDisabled = true; // deactivate the Play-Button
     this.animateAction(0, 44);
   }
 
@@ -304,9 +311,9 @@ export class GameAreaComponent implements AfterViewInit {
           console.log("down");
           this.animateMovement(index, 0, 1, steps);
           break;
-        case 'collectItem();': // Neuer Fall für das Einsammeln von Items
+        case 'collectItem();': // new case for item selection
           console.log("collecting item");
-          this.player.collectItem(); // Rufe die neue Methode auf, wenn collectItem ausgeführt wird
+          this.player.collectItem(); // call the method if code says collectItem()
           this.animateAction(index + 1, steps);
           break;
       }
@@ -337,7 +344,7 @@ export class GameAreaComponent implements AfterViewInit {
   }
 
   private animate(): void {
-    // Animation stoppen, wenn animationActive false ist
+    // stop animation if animationActive == false
     if (!this.animationActive) {
       return;
     }
@@ -436,6 +443,7 @@ class Icon {
   static width: number = 32;
   static height: number = 32;
   collected: boolean = false;
+  // svg for items
   static heartSVG: string = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
   <path fill="red" d="M9 2H5v2H3v2H1v6h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2V6h-2V4h-2V2h-4v2h-2v2h-2V4H9zm0
   2v2h2v2h2V6h2V4h4v2h2v6h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3V6h2V4z"/>
@@ -501,7 +509,7 @@ class Player {
 
   constructor(
     { position, velocity }: { position: { x: number; y: number }; velocity: { x: number; y: number } },
-    gameArea: GameAreaComponent, // Fügen Sie eine zusätzliche Parameter für die GameArea hinzu
+    gameArea: GameAreaComponent,
     private toastr: ToastrService
   ) {
     this.position = position;
@@ -568,7 +576,7 @@ class Player {
 
   checkBoundaryCollision(boundaries: Boundary[]): void {
     if (this.collision) {
-      return; // Wenn eine Kollision bereits erkannt wurde, tue nichts
+      return; // if collision detected, do nothing
     }
 
     for (const boundary of boundaries) {
@@ -589,23 +597,23 @@ class Player {
         this.resetVel();
         this.draw();
         this.stopAnimation();
-        return; // Verlasse die Schleife, da die Kollision bereits erkannt wurde
+        return; // leave the loop since collision was deteced
       }
     }
   }
 
   showToast(): void {
     this.toastr.success('Herzlichen Glückwunsch!', 'Spiel beendet.', {
-      positionClass: 'toast-center', // Fügen Sie diese Zeile hinzu
+      positionClass: 'toast-center',
     });
   }
   collectItemCommandExecuted: boolean = false;
 
-  // Neue Methode, um die Ausführung des collectItem Befehls zu verarbeiten
+  // new method for the collection of items
   collectItem(): void {
     this.collectItemCommandExecuted = true;
     this.checkIconCollision();
-    // Setze die Flag nach der Überprüfung zurück, um sicherzustellen, dass Items nur bei expliziter Ausführung gesammelt werden
+    // reset the flag so items only get explicitly collected
     this.collectItemCommandExecuted = false;
   }
 
@@ -627,10 +635,10 @@ class Player {
         icon.collected = true;
         if(icon.itemtype === "b"){
           alert("Es wurde ein Bug eingesammelt, Spiel beendet");
-          this.gameArea.isPlayButtonDisabled = true; // Deaktiviert den Start-Button, um weitere Aktionen zu verhindern
-          this.stopAnimation(); // Stoppt die Animation und damit das Spiel
+          this.gameArea.isPlayButtonDisabled = true; // deactivate startButton to hinder it from starting it again
+          this.stopAnimation(); // stops animation and game
           this.gameArea.resetGame()
-          return; // Verlässt die Schleife und Funktion sofort, um keine weiteren Aktionen zuzulassen
+          return; // leaves loop so no further action can happen
         }
         if(icon.itemtype === "i"){
           this.gameArea.collectedHeartsCount++;
@@ -649,7 +657,7 @@ class Player {
     if (distanceX == 0 && distanceY == 0 && this.gameArea.collectedHeartsCount == this.gameArea.HeartsCount && !this.goalReached) {
       console.log('Goal reached!');
       alert("Ziel erreicht");
-      this.showToast();
+      // this.showToast();
       this.gameArea.isPlayButtonDisabled = true;
       this.goalReached = true;
       return true;
