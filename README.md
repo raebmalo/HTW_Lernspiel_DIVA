@@ -4,24 +4,18 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 ## Description
 
 The Diva-e Learning Game is an interactive and engaging experience designed to deliver educational content in a playful manner. Developed by a Group of Students for Diva-e, this game employs cutting-edge technologies to provide an immersive learning experience.
+It consists of 5 levels, each progressively increasing in difficulty. Players have the ability to control a character using buttons or collect items to advance through the levels. Each level presents unique challenges and learning opportunities, catering to players of varying skill levels.
 
-## Features
+## Requirements 
+Installation of Node.js, Angular CLI are prerequisites.
+To install the dependencies for this project, use "npm install". This command reads the package.json file and installs all the dependencies listed there.
 
-- 🚀 Interactive programming learning 
-- 🎮 Fun and challenging game mechanics
-- 🖥️ Responsive design for various devices
-
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Starting the game
+Clone the repository to your local machine.
+Navigate to the project directory in your terminal.
+Run npm install to install the necessary dependencies.
+Execute ng serve to start the development server.
+Open your web browser and visit http://localhost:4200 to access the game.
 
 ## Running unit tests
 
